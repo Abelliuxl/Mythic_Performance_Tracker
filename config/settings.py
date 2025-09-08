@@ -48,7 +48,7 @@ BROWSER_CONFIG = {
     "log_level": "3",
     "proxy_server": "http://192.168.5.101:7890",
     "page_load_strategy": "none",
-    "chromedriver_path": "chromedriver-win64/chromedriver.exe"  # 使用相对路径，指向chromedriver-win64文件夹下的chromedriver.exe
+    "chromedriver_path": None  # 现在由平台工具自动检测，无需手动配置
 }
 
 # 爬虫配置

@@ -1,0 +1,22 @@
+# Mythic Performance Tracker - Requirements
+# 
+# This file contains all Python dependencies required for the Mythic Performance Tracker.
+# To install: pip install -r requirements.txt
+
+# Core dependencies
+selenium>=4.1.0          # Browser automation for web scraping
+beautifulsoup4>=4.9.3    # HTML parsing and web scraping
+pandas>=1.3.0           # Data manipulation and analysis
+openpyxl>=3.0.7         # Excel file generation and manipulation
+requests>=2.25.1        # HTTP requests (for future API integration)
+lxml>=4.6.3             # Fast HTML/XML parser (optional but recommended)
+
+# Development dependencies (optional)
+pytest>=6.2.4           # For testing (if needed)
+black>=21.0.0           # Code formatting (if needed)
+flake8>=3.9.0           # Code linting (if needed)
+
+# Platform-specific notes:
+# - Windows: ChromeDriver should be in chromedriver-win64/ directory
+# - Linux: ChromeDriver should be installed in /usr/local/bin/ or system PATH
+# - macOS: ChromeDriver should be installed in /usr/local/bin/ or system PATH

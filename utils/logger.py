@@ -10,7 +10,7 @@ class Logger:
         # 确保日志目录存在
         log_dir = os.path.dirname(self.log_file)
         if log_dir and not os.path.exists(log_dir):
-            os.makedirs(log_dir)
+            os.makedirs(log_dir, exist_ok=True)
     
     def log(self, message):
         """记录日志信息"""
