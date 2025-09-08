@@ -102,3 +102,15 @@ FILE_PATHS = {
 # WCL URL配置
 WCL_BASE_URL = "https://www.warcraftlogs.com"
 WCL_ZONE_ID = "45"  # 赛季区域ID，需要手动更新
+
+# HTML报告文件管理配置
+REPORT_CONFIG = {
+    "output_dir": "reports",
+    "max_files": 20,  # 最大保留文件数量
+    "compress_old_files": True,  # 是否压缩旧文件
+    "compress_after_days": 7,  # 多少天后压缩
+    "delete_after_days": 30,  # 多少天后删除（0表示不删除）
+    "organize_by_date": True,  # 按日期组织文件
+    "keep_latest_copy": True,  # 保留最新版本副本
+    "latest_filename": "mythic_performance_report_latest.html"
+}

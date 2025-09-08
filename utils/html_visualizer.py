@@ -32,7 +32,7 @@ class HTMLVisualizer:
             result_df["限时层数"] = pd.to_numeric(result_df.get("限时层数"), errors="coerce")
             result_df["是否限时"] = result_df.get("是否限时").astype(str).str.strip()
 
-            # 无条件重建“显示层数”列，避免原文件中携带的异常类型
+            # 无条件重建"显示层数"列，避免原文件中携带的异常类型
             def _fmt(row):
                 lvl = row.get("限时层数")
                 if pd.isna(lvl):
@@ -46,20 +46,69 @@ class HTMLVisualizer:
 
             # 再次清洗
             result_df = self._sanitize_dataframe(result_df)
-            
+
             # 生成HTML
             html_content = self._generate_html_content(char_df, result_df)
-            
+
             # 保存文件
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(html_content)
-            
+
             logger.success(f"HTML可视化报告已生成: {output_path}")
             return True
-            
+
         except Exception as e:
             logger.error(f"生成HTML报告失败: {e}\n{traceback.format_exc()}")
             return False
+
+    def generate_html_content_only(self, character_info_path, result_path):
+        """
+        只生成HTML内容，不保存文件
+        用于新的报告管理器架构
+        """
+        try:
+            # 读取数据（带兜底）
+            char_df = self._safe_read_excel(character_info_path)
+            result_df = self._safe_read_excel(result_path, preferred_sheet="明细")
+
+            # 再次整体清洗，确保无数组/列表残留
+            char_df = self._sanitize_dataframe(char_df)
+            result_df = self._sanitize_dataframe(result_df)
+
+            # 标准化列名：确保存在关键列
+            expected_cols = {"玩家", "角色名", "服务器", "副本", "通关时间", "限时层数", "是否限时"}
+            missing_cols = [c for c in ["玩家", "角色名", "副本"] if c not in result_df.columns]
+            if missing_cols:
+                raise ValueError(f"结果表缺少必要列: {missing_cols}")
+
+            # 数值与标志列标准化
+            result_df["限时层数"] = pd.to_numeric(result_df.get("限时层数"), errors="coerce")
+            result_df["是否限时"] = result_df.get("是否限时").astype(str).str.strip()
+
+            # 无条件重建"显示层数"列，避免原文件中携带的异常类型
+            def _fmt(row):
+                lvl = row.get("限时层数")
+                if pd.isna(lvl):
+                    return "-"
+                try:
+                    lvl_i = int(float(lvl))
+                except Exception:
+                    return "-"
+                return f"+{lvl_i}" if row.get("是否限时") == "是" else f"+{lvl_i}*"
+            result_df["显示层数"] = result_df.apply(_fmt, axis=1)
+
+            # 再次清洗
+            result_df = self._sanitize_dataframe(result_df)
+
+            # 生成HTML内容
+            html_content = self._generate_html_content(char_df, result_df)
+
+            logger.success("HTML内容生成成功")
+            return html_content
+
+        except Exception as e:
+            logger.error(f"生成HTML内容失败: {e}\n{traceback.format_exc()}")
+            return None
 
     def _safe_read_excel(self, file_path, preferred_sheet=None):
         """安全读取Excel：先尝试pandas，失败则退化到openpyxl逐行读取。"""
@@ -155,7 +204,7 @@ class HTMLVisualizer:
     def _generate_html_content(self, char_df, result_df):
         """生成HTML内容"""
         # 准备数据
-        summary_data = self._prepare_summary_data(result_df)
+        summary_data = self._prepare_summary_data(result_df, char_df)
         character_stats = self._prepare_character_stats(char_df, result_df)
         dungeon_stats = self._prepare_dungeon_stats(result_df)
         player_stats = self._prepare_player_stats(char_df, result_df) # 新增玩家统计数据
@@ -190,12 +239,15 @@ class HTMLVisualizer:
         
         return html_content
     
-    def _prepare_summary_data(self, result_df):
+    def _prepare_summary_data(self, result_df, char_df):
         """准备总览数据（避开pandas透视，提升鲁棒性）"""
         try:
             for col in ["玩家", "角色名", "副本", "显示层数"]:
                 if col in result_df.columns:
                     result_df[col] = result_df[col].astype(str)
+
+            # 创建角色到职业的映射
+            char_to_class = dict(zip(char_df["角色名"], char_df["职业"]))
 
             matrix = {}
             for _, r in result_df.iterrows():
@@ -212,9 +264,11 @@ class HTMLVisualizer:
 
             summary_data = []
             for (player, char), dun_map in matrix.items():
+                class_name = char_to_class.get(str(char), "未知职业")
                 summary_data.append({
                     "player": player,
                     "character": char,
+                    "class": class_name,
                     "dungeons": dun_map
                 })
             return summary_data
@@ -639,6 +693,14 @@ class HTMLVisualizer:
         </div>
         """
     
+    def _hex_to_rgba(self, hex_color, alpha=0.1):
+        """将十六进制颜色转换为RGBA字符串"""
+        hex_color = hex_color.lstrip('#')
+        r = int(hex_color[0:2], 16)
+        g = int(hex_color[2:4], 16)
+        b = int(hex_color[4:6], 16)
+        return f"rgba({r}, {g}, {b}, {alpha})"
+
     def _generate_summary_table(self, summary_data):
         """生成总览表格HTML（搜索 + 冻结前两列 + 可排序）"""
         html = """
@@ -656,7 +718,7 @@ class HTMLVisualizer:
                             <th class=\"sticky-col sticky-col-1 sortable\" data-type=\"text\">👤 玩家</th>
                             <th class=\"sticky-col sticky-col-2 sortable\" data-type=\"text\">🎮 角色名</th>
         """
-        
+
         # 添加副本列头（先按配置顺序，再追加未配置副本；使用全量union）
         dungeons = []
         if summary_data:
@@ -672,33 +734,35 @@ class HTMLVisualizer:
             for dungeon_full_name in dungeons:
                 dungeon_short_name = DUNGEON_SHORT_NAME_MAP.get(dungeon_full_name, dungeon_full_name)
                 html += f'<th class="sortable" data-type="level" title="{dungeon_full_name}">{dungeon_short_name}</th>'
-        
+
         html += """
                         </tr>
                     </thead>
                     <tbody>
         """
-        
+
         # 添加数据行
         for player_data in summary_data:
+            class_color = CLASS_COLOR_MAP.get(player_data["class"], "FFFFFF")
+            rgba_color = self._hex_to_rgba(class_color, 0.1)
             html += f"""
                         <tr>
                             <td class="sticky-col sticky-col-1">{player_data["player"]}</td>
-                            <td class="sticky-col sticky-col-2">{player_data["character"]}</td>
+                            <td class="sticky-col sticky-col-2" style="background-color: {rgba_color};">{player_data["character"]}</td>
             """
             for dungeon_full_name in dungeons:
                 level = player_data["dungeons"].get(dungeon_full_name, "-")
                 level_class = self._get_level_class(level)
                 html += f'<td class="{level_class}" title="{dungeon_full_name}">{level}</td>'
             html += "</tr>"
-        
+
         html += """
                     </tbody>
                 </table>
             </div>
         </div>
         """
-        
+
         return html
     
     def _generate_character_stats(self, character_stats):
