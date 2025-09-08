@@ -240,15 +240,13 @@ body.dark .character-stats-controls select {
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增强阴影效果 */
-    border: 1px solid #e8e8e8; /* 添加浅灰色边框 */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* 更柔和的阴影 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 增强hover阴影效果 */
-    border-color: #d0d0d0; /* hover时边框颜色加深 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* 更柔和的hover阴影 */
 }
 
 .card-header {
@@ -329,48 +327,46 @@ body.dark .character-stats-controls select {
 }
 
 .charts-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+    display: grid; /* 保持grid，但移除列定义，让每个子项占据一行 */
+    /* grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); */ /* 移除此行 */
+    gap: 30px;
+    margin-top: 30px;
 }
 
 .chart-card {
     background: white;
     border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* 更柔和的阴影 */
 }
 
 .chart-card h4 {
     color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.2em;
+    margin-bottom: 20px;
+    font-size: 1.3em;
     text-align: center;
 }
 
 .chart-container {
     position: relative;
-    height: 280px; /* 默认高度稍微减小 */
+    height: 300px; /* 默认高度 */
 }
 
-/* 针对玩家统计图表，移除固定高度，让其在JS中动态计算 */
+/* 针对玩家统计图表，可能需要更大的高度以容纳更多玩家 */
 #playerChart {
-    /* height: 400px; */ /* 移除固定高度 */
+    height: 400px; /* 示例高度，可根据实际玩家数量调整 */
 }
 
 /* 手机端玩家统计图表优化 */
 @media (max-width: 768px) {
-    /* 玩家统计图表容器在手机端的高度限制 - 整体缩小 */
+    /* 玩家统计图表容器在手机端的高度限制 */
     .chart-card:has(#playerChart) {
-        max-height: none; /* 移除最大高度限制 */
-        overflow: visible; /* 允许内容溢出，由JS控制滚动 */
-        margin-bottom: 10px;
+        max-height: 350px;
+        overflow: hidden;
     }
     
     #playerChart {
-        /* height: 230px !important; */ /* 移除固定高度 */
-        /* min-height: 230px !important; */ /* 移除最小高度 */
+        height: 300px !important;
     }
     
     /* 在手机端隐藏玩家统计图表的图例 */
@@ -385,7 +381,7 @@ body.dark .character-stats-controls select {
     
     /* 减少图表卡片的内边距，为图表提供更多空间 */
     .chart-card:has(#playerChart) {
-        padding: 8px !important;
+        padding: 15px !important;
     }
 }
 
@@ -409,40 +405,8 @@ body.dark .character-stats-controls select {
         grid-template-columns: 1fr;
     }
     
-    .table-wrapper {
-        overflow-x: auto; /* 确保在手机端表格可以水平滚动 */
-    }
-    
     .charts-container {
         grid-template-columns: 1fr;
-        gap: 15px;
-        margin-top: 15px;
-    }
-    
-    .chart-card {
-        padding: 15px;
-        margin-bottom: 10px;
-    }
-    
-    .chart-card h4 {
-        font-size: 1.1em;
-        margin-bottom: 10px;
-    }
-    
-    .chart-container {
-        height: 250px; /* 手机端进一步减小图表高度 */
-    }
-    
-    /* 数据可视化板块的三个图表特殊优化 */
-    .section:has(.charts-container) .chart-container {
-        height: 280px; /* 数据可视化板块的图表高度，确保横坐标可见 */
-    }
-    
-    /* 数据可视化板块的图表卡片在手机端居中 */
-    .section:has(.charts-container) .chart-card {
-        margin: 0 auto;
-        max-width: 95%; /* 增加最大宽度，确保横坐标标签能够完整显示 */
-        min-width: 320px; /* 设置最小宽度，确保图表有足够空间显示横坐标 */
     }
     
     .summary-table th,
@@ -980,7 +944,7 @@ body.dark .character-stats-controls select {
     width: 100%;
     height: 100%;
     background-color: #fff;
-    margin: auto; /* 修改为 auto 以实现居中 */
+    margin: 0;
     border-radius: 0;
     padding: 0;
     box-shadow: none;
@@ -1271,7 +1235,7 @@ body.dark .character-stats-controls select {
                     <span class="afk-icon-text">点我试试</span>
                 </div>
             </div>
-            <p>生成时间: 2025-09-09 02:06:29</p>
+            <p>生成时间: 2025-09-09 01:21:53</p>
         </div>
 
         <div class="section">
@@ -1306,8 +1270,7 @@ body.dark .character-stats-controls select {
                     </label>
                 </div>
             </div>
-            <div class="table-wrapper">
-                
+            
         <div class="table-container">
             <div class="table-toolbar">
                 <div class="toolbar-actions">
@@ -1399,7 +1362,6 @@ body.dark .character-stats-controls select {
             </div>
         </div>
         
-            </div>
             <div class="fullscreen-button-container">
                 <button id="fullscreenTableBtn" class="btn fullscreen-btn">
                     <span class="fullscreen-icon">🔍</span>
@@ -1782,14 +1744,6 @@ const levelBackgroundColors = levelLabels.map(label => {
 });
 const levelBorderColors = levelBackgroundColors.map(color => color); // 边框颜色与背景色相同
 
-// 检查是否为手机设备
-function isMobile() {
-    return window.innerWidth <= 768;
-}
-
-// 根据设备类型设置字体大小
-const axisFontSize = isMobile() ? 10 : 16;
-
 new Chart(levelCtx, {
     type: 'bar',
     data: {
@@ -1816,16 +1770,14 @@ new Chart(levelCtx, {
                 ticks: {
                     stepSize: 1,
                     font: {
-                        size: axisFontSize // 根据设备设置Y轴字体
+                        size: 16 // 增大Y轴字体
                     }
                 }
             },
             x: {
                 ticks: {
                     font: {
-                        size: axisFontSize, // 根据设备设置X轴字体
-                        maxRotation: 45, // 在手机端允许标签旋转
-                        minRotation: 0
+                        size: 16 // 增大X轴字体
                     }
                 }
             }
@@ -1846,10 +1798,6 @@ const dungeonBackgroundColors = dungeonFullNames.map(fullName => {
     return dungeonColorMap[fullName] || 'rgba(120, 120, 120, 0.8)'; // 默认灰色
 });
 const dungeonBorderColors = dungeonBackgroundColors.map(color => color.replace('0.8)', '1)')); // 边框颜色使用不透明版本
-
-// 设置字体大小
-const dungeonAxisFontSize = isMobile() ? 10 : 16;
-const dungeonLegendFontSize = isMobile() ? 12 : 16;
 
 new Chart(dungeonCtx, {
     type: 'bar', // 主类型为柱状图
@@ -1881,7 +1829,7 @@ new Chart(dungeonCtx, {
                 position: 'top',
                 labels: {
                     font: {
-                        size: dungeonLegendFontSize // 根据设备设置图例字体
+                        size: 16 // 增大图例字体
                     }
                 }
             },
@@ -1889,10 +1837,10 @@ new Chart(dungeonCtx, {
                 mode: 'index',
                 intersect: false,
                 titleFont: {
-                    size: dungeonLegendFontSize // 根据设备设置tooltip标题字体
+                    size: 16 // 增大tooltip标题字体
                 },
                 bodyFont: {
-                    size: dungeonLegendFontSize // 根据设备设置tooltip内容字体
+                    size: 16 // 增大tooltip内容字体
                 },
                 callbacks: {
                     title: function(tooltipItems) {
@@ -1926,12 +1874,12 @@ new Chart(dungeonCtx, {
                     display: true,
                     text: '平均等级',
                     font: {
-                        size: dungeonAxisFontSize // 根据设备设置Y轴标题字体
+                        size: 16 // 增大Y轴标题字体
                     }
                 },
                 ticks: {
                     font: {
-                        size: dungeonAxisFontSize // 根据设备设置Y轴刻度字体
+                        size: 16 // 增大Y轴刻度字体
                     }
                 }
             },
@@ -1944,12 +1892,12 @@ new Chart(dungeonCtx, {
                     display: true,
                     text: '通关率 (%)',
                     font: {
-                        size: dungeonAxisFontSize // 根据设备设置Y轴标题字体
+                        size: 16 // 增大Y轴标题字体
                     }
                 },
                 ticks: {
                     font: {
-                        size: dungeonAxisFontSize // 根据设备设置Y轴刻度字体
+                        size: 16 // 增大Y轴刻度字体
                     },
                 },
                 grid: {
@@ -1959,9 +1907,7 @@ new Chart(dungeonCtx, {
             x: {
                 ticks: {
                     font: {
-                        size: dungeonAxisFontSize, // 根据设备设置X轴刻度字体
-                        maxRotation: 45, // 在手机端允许标签旋转
-                        minRotation: 0
+                        size: 16 // 增大X轴刻度字体
                     }
                 }
             }
@@ -1974,9 +1920,6 @@ const classCtx = document.getElementById('classChart').getContext('2d');
 const classLabels = Object.keys(chartsData.class_performance);
 const classLevels = classLabels.map(c => chartsData.class_performance[c].avg_level);
 const classColors = classLabels.map(c => chartsData.class_performance[c].color || 'rgba(120,120,120,0.8)');
-
-// 设置字体大小
-const classAxisFontSize = isMobile() ? 10 : 16;
 
 new Chart(classCtx, {
     type: 'bar',
@@ -1997,16 +1940,14 @@ new Chart(classCtx, {
                 beginAtZero: true,
                 ticks: {
                     font: {
-                        size: classAxisFontSize // 根据设备设置Y轴字体
+                        size: 16 // 增大Y轴字体
                     }
                 }
             },
             x: {
                 ticks: {
                     font: {
-                        size: classAxisFontSize, // 根据设备设置X轴字体
-                        maxRotation: 45, // 在手机端允许标签旋转
-                        minRotation: 0
+                        size: 16 // 增大X轴字体
                     }
                 }
             }
@@ -2203,8 +2144,8 @@ new Chart(classCtx, {
                         weight: playerLabelFontWeight // 加粗
                     }
                 },
-                barPercentage: 0.8, // 调整柱状条宽度占比，增加间距
-                categoryPercentage: 0.9, // 调整类别间距占比
+                barPercentage: 1.0, // 移除柱状条间隔
+                categoryPercentage: 1.0, // 移除柱状条间隔
                 // 尝试设置barThickness为'flex'，让Chart.js自动计算最佳宽度
                 barThickness: 'flex',
                 grid: {
@@ -2255,12 +2196,6 @@ new Chart(classCtx, {
         chartOptions.scales.y.categoryPercentage = 0.8; // 类别间距占比
         chartOptions.scales.y.barThickness = 'flex'; // 让Chart.js自动计算最佳厚度
     }
-
-    // 动态计算图表高度
-    const numberOfPlayers = finalPlayerLabels.length;
-    const barHeight = 25; // 每个柱状条的高度
-    const paddingHeight = 100; // 顶部和底部以及轴标签的额外空间
-    playerCtx.canvas.height = numberOfPlayers * barHeight + paddingHeight;
 
     const playerChartInstance = new Chart(playerCtx, {
         type: 'bar', // 柱状图
@@ -2705,9 +2640,6 @@ function showPlayerDetailModal(playerName) {
 
     // 初始化全屏表格的搜索功能
     function initFullscreenTableSearch(table) {
-        // 获取主页面的“隐藏无限时记录”复选框
-        const hideUntimedSummaryRowsCheckbox = document.getElementById('hideUntimedSummaryRows');
-
         // 创建搜索工具栏
         const toolbar = document.createElement('div');
         toolbar.className = 'table-toolbar';
@@ -2738,31 +2670,13 @@ function showPlayerDetailModal(playerName) {
         // 搜索功能
         function filterRows() {
             const q = searchInput.value.toLowerCase().trim();
-            // 获取“隐藏无限时记录”的状态
-            const hideUntimed = hideUntimedSummaryRowsCheckbox ? hideUntimedSummaryRowsCheckbox.checked : false;
             const rows = table.tBodies[0].rows;
 
             for (let i = 0; i < rows.length; i++) {
                 const row = rows[i];
                 const cells = Array.from(row.cells);
                 const text = cells.map(td => td.textContent.toLowerCase()).join(' ');
-
-                // 搜索过滤
-                const searchOk = q === '' || text.includes(q);
-
-                // 隐藏无限时记录过滤 (针对 summaryTable)
-                let untimedOk = true;
-                if (hideUntimed) { // 如果选中，则隐藏无记录
-                    // 从第三个单元格开始（跳过玩家和角色名），检查是否有非"-"的层数记录
-                    const dungeonLevels = Array.from(row.cells).slice(2); // 获取副本层数单元格
-                    const hasTimedRun = dungeonLevels.some(cell => {
-                        const levelText = cell.textContent.trim();
-                        return levelText !== '-' && levelText !== '';
-                    });
-                    untimedOk = hasTimedRun; // 如果没有限时记录，则 untimedOk 为 false，隐藏
-                }
-                
-                row.style.display = (searchOk && untimedOk) ? '' : 'none';
+                row.style.display = q === '' || text.includes(q) ? '' : 'none';
             }
         }
 
@@ -2789,6 +2703,33 @@ function showPlayerDetailModal(playerName) {
         // 克隆表格
         cloneTableToFullscreen();
 
+        // 如果是手机且不是横屏，提示用户横屏
+        if (isMobile() && !isLandscape()) {
+            const modalBody = fullscreenModal.querySelector('.modal-body');
+            const landscapeTip = document.createElement('div');
+            landscapeTip.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                z-index: 1000;
+                font-size: 1.2em;
+            `;
+            landscapeTip.innerHTML = '📱 请将手机横屏以获得最佳查看体验<br><small>（可以旋转手机或继续使用）</small>';
+            modalBody.appendChild(landscapeTip);
+
+            // 5秒后自动移除提示
+            setTimeout(() => {
+                if (landscapeTip.parentNode) {
+                    landscapeTip.remove();
+                }
+            }, 5000);
+        }
 
         // 显示弹窗
         fullscreenModal.style.display = 'block';

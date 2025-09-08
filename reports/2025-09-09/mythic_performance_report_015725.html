@@ -409,10 +409,6 @@ body.dark .character-stats-controls select {
         grid-template-columns: 1fr;
     }
     
-    .table-wrapper {
-        overflow-x: auto; /* 确保在手机端表格可以水平滚动 */
-    }
-    
     .charts-container {
         grid-template-columns: 1fr;
         gap: 15px;
@@ -980,7 +976,7 @@ body.dark .character-stats-controls select {
     width: 100%;
     height: 100%;
     background-color: #fff;
-    margin: auto; /* 修改为 auto 以实现居中 */
+    margin: 0;
     border-radius: 0;
     padding: 0;
     box-shadow: none;
@@ -1271,7 +1267,7 @@ body.dark .character-stats-controls select {
                     <span class="afk-icon-text">点我试试</span>
                 </div>
             </div>
-            <p>生成时间: 2025-09-09 02:06:29</p>
+            <p>生成时间: 2025-09-09 01:57:25</p>
         </div>
 
         <div class="section">
@@ -1306,8 +1302,7 @@ body.dark .character-stats-controls select {
                     </label>
                 </div>
             </div>
-            <div class="table-wrapper">
-                
+            
         <div class="table-container">
             <div class="table-toolbar">
                 <div class="toolbar-actions">
@@ -1399,7 +1394,6 @@ body.dark .character-stats-controls select {
             </div>
         </div>
         
-            </div>
             <div class="fullscreen-button-container">
                 <button id="fullscreenTableBtn" class="btn fullscreen-btn">
                     <span class="fullscreen-icon">🔍</span>
@@ -2705,9 +2699,6 @@ function showPlayerDetailModal(playerName) {
 
     // 初始化全屏表格的搜索功能
     function initFullscreenTableSearch(table) {
-        // 获取主页面的“隐藏无限时记录”复选框
-        const hideUntimedSummaryRowsCheckbox = document.getElementById('hideUntimedSummaryRows');
-
         // 创建搜索工具栏
         const toolbar = document.createElement('div');
         toolbar.className = 'table-toolbar';
@@ -2738,31 +2729,13 @@ function showPlayerDetailModal(playerName) {
         // 搜索功能
         function filterRows() {
             const q = searchInput.value.toLowerCase().trim();
-            // 获取“隐藏无限时记录”的状态
-            const hideUntimed = hideUntimedSummaryRowsCheckbox ? hideUntimedSummaryRowsCheckbox.checked : false;
             const rows = table.tBodies[0].rows;
 
             for (let i = 0; i < rows.length; i++) {
                 const row = rows[i];
                 const cells = Array.from(row.cells);
                 const text = cells.map(td => td.textContent.toLowerCase()).join(' ');
-
-                // 搜索过滤
-                const searchOk = q === '' || text.includes(q);
-
-                // 隐藏无限时记录过滤 (针对 summaryTable)
-                let untimedOk = true;
-                if (hideUntimed) { // 如果选中，则隐藏无记录
-                    // 从第三个单元格开始（跳过玩家和角色名），检查是否有非"-"的层数记录
-                    const dungeonLevels = Array.from(row.cells).slice(2); // 获取副本层数单元格
-                    const hasTimedRun = dungeonLevels.some(cell => {
-                        const levelText = cell.textContent.trim();
-                        return levelText !== '-' && levelText !== '';
-                    });
-                    untimedOk = hasTimedRun; // 如果没有限时记录，则 untimedOk 为 false，隐藏
-                }
-                
-                row.style.display = (searchOk && untimedOk) ? '' : 'none';
+                row.style.display = q === '' || text.includes(q) ? '' : 'none';
             }
         }
 
@@ -2789,6 +2762,33 @@ function showPlayerDetailModal(playerName) {
         // 克隆表格
         cloneTableToFullscreen();
 
+        // 如果是手机且不是横屏，提示用户横屏
+        if (isMobile() && !isLandscape()) {
+            const modalBody = fullscreenModal.querySelector('.modal-body');
+            const landscapeTip = document.createElement('div');
+            landscapeTip.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 20px;
+                border-radius: 10px;
+                text-align: center;
+                z-index: 1000;
+                font-size: 1.2em;
+            `;
+            landscapeTip.innerHTML = '📱 请将手机横屏以获得最佳查看体验<br><small>（可以旋转手机或继续使用）</small>';
+            modalBody.appendChild(landscapeTip);
+
+            // 5秒后自动移除提示
+            setTimeout(() => {
+                if (landscapeTip.parentNode) {
+                    landscapeTip.remove();
+                }
+            }, 5000);
+        }
 
         // 显示弹窗
         fullscreenModal.style.display = 'block';

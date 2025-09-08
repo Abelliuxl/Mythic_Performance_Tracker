@@ -1271,7 +1271,7 @@ body.dark .character-stats-controls select {
                     <span class="afk-icon-text">点我试试</span>
                 </div>
             </div>
-            <p>生成时间: 2025-09-09 02:06:29</p>
+            <p>生成时间: 2025-09-09 02:03:34</p>
         </div>
 
         <div class="section">
@@ -2705,9 +2705,6 @@ function showPlayerDetailModal(playerName) {
 
     // 初始化全屏表格的搜索功能
     function initFullscreenTableSearch(table) {
-        // 获取主页面的“隐藏无限时记录”复选框
-        const hideUntimedSummaryRowsCheckbox = document.getElementById('hideUntimedSummaryRows');
-
         // 创建搜索工具栏
         const toolbar = document.createElement('div');
         toolbar.className = 'table-toolbar';
@@ -2738,31 +2735,13 @@ function showPlayerDetailModal(playerName) {
         // 搜索功能
         function filterRows() {
             const q = searchInput.value.toLowerCase().trim();
-            // 获取“隐藏无限时记录”的状态
-            const hideUntimed = hideUntimedSummaryRowsCheckbox ? hideUntimedSummaryRowsCheckbox.checked : false;
             const rows = table.tBodies[0].rows;
 
             for (let i = 0; i < rows.length; i++) {
                 const row = rows[i];
                 const cells = Array.from(row.cells);
                 const text = cells.map(td => td.textContent.toLowerCase()).join(' ');
-
-                // 搜索过滤
-                const searchOk = q === '' || text.includes(q);
-
-                // 隐藏无限时记录过滤 (针对 summaryTable)
-                let untimedOk = true;
-                if (hideUntimed) { // 如果选中，则隐藏无记录
-                    // 从第三个单元格开始（跳过玩家和角色名），检查是否有非"-"的层数记录
-                    const dungeonLevels = Array.from(row.cells).slice(2); // 获取副本层数单元格
-                    const hasTimedRun = dungeonLevels.some(cell => {
-                        const levelText = cell.textContent.trim();
-                        return levelText !== '-' && levelText !== '';
-                    });
-                    untimedOk = hasTimedRun; // 如果没有限时记录，则 untimedOk 为 false，隐藏
-                }
-                
-                row.style.display = (searchOk && untimedOk) ? '' : 'none';
+                row.style.display = q === '' || text.includes(q) ? '' : 'none';
             }
         }
 

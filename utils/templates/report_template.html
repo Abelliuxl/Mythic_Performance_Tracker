@@ -35,7 +35,15 @@
                     </label>
                 </div>
             </div>
-            {{SUMMARY_TABLE}}
+            <div class="table-wrapper">
+                {{SUMMARY_TABLE}}
+            </div>
+            <div class="fullscreen-button-container">
+                <button id="fullscreenTableBtn" class="btn fullscreen-btn">
+                    <span class="fullscreen-icon">🔍</span>
+                    <span class="fullscreen-text">全屏查看表格</span>
+                </button>
+            </div>
         </div>
 
         <div class="section">
@@ -130,6 +138,19 @@
             <div class="love-progress-container">
                 <div class="love-progress-bar" id="loveProgressBar"></div>
                 <span id="loveCount">0/10</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Table Modal -->
+    <div id="fullscreenTableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">限时总览 - 全屏查看</h2>
+                <button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Table will be cloned here by JavaScript -->
             </div>
         </div>
     </div>
