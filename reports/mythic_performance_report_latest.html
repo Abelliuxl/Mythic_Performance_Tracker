@@ -1,0 +1,727 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mythic+ 性能追踪报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table-wrapper {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            padding: 15px 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            font-weight: 500;
+        }
+
+        .summary-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .summary-table tr:hover {
+            background-color: #e3f2fd;
+            transition: background-color 0.3s ease;
+        }
+
+        /* 等级颜色样式 */
+        .level-empty {
+            background-color: #DDDDDD !important;
+            color: #999;
+        }
+
+        
+        .level-2 {
+            background-color: #E3F2FD !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-3 {
+            background-color: #BBDEFB !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-4 {
+            background-color: #81D4FA !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-5 {
+            background-color: #4DD0E1 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-6 {
+            background-color: #4DB6AC !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-7 {
+            background-color: #81C784 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-8 {
+            background-color: #AED581 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-9 {
+            background-color: #DCE775 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-10 {
+            background-color: #FFF176 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-11 {
+            background-color: #FFD54F !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-12 {
+            background-color: #FFB74D !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-13 {
+            background-color: #FF8A65 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-14 {
+            background-color: #F48FB1 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-15 {
+            background-color: #F06292 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-16 {
+            background-color: #EC407A !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-17 {
+            background-color: #E91E63 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-18 {
+            background-color: #F44336 !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .level-19 {
+            background-color: #D32F2F !important;
+            color: white;
+            font-weight: bold;
+        }
+        
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 20px;
+            border-left: 5px solid #667eea;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .character-info {
+            flex: 1;
+        }
+
+        .character-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .character-server {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .character-class {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .dungeon-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-card h4 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-table th,
+            .summary-table td {
+                padding: 8px 6px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mythic+ 性能追踪报告</h1>
+            <p>生成时间: 2025-09-08 14:27:05</p>
+        </div>
+
+        
+        <div class="table-container">
+            <h3>限时总览</h3>
+            <div class="table-wrapper">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>玩家</th>
+                            <th>角色名</th>
+        <th>圣焰隐修院</th><th>塔扎维什: 琳彩天街</th><th>塔扎维什: 索·莉亚的宏图</th><th>奥尔达尼生态圆顶</th><th>水闸行动</th><th>破晨号</th><th>艾拉-卡拉，回响之城</th><th>赎罪大厅</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        
+                        <tr>
+                            <td>段总</td>
+                            <td>生锈的斩牛刀</td>
+            <td class="level-13">+13</td><td class="level-13">+13</td><td class="level-13">+13</td><td class="level-13">+13</td><td class="level-12">+12</td><td class="level-12">+12</td><td class="level-12">+12</td><td class="level-14">+14*</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+
+        <div class="section">
+            
+        <div class="stats-grid">
+            <h3>角色统计</h3>
+            <div class="stats-cards">
+        
+                <div class="stat-card">
+                    <div class="card-header" style="border-left-color: #FFF569;">
+                        <div class="character-info">
+                            <div class="character-name">生锈的斩牛刀</div>
+                            <div class="character-server">伊森利恩</div>
+                        </div>
+                        <div class="character-class" style="color: #FFF569;">盗贼</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">12.8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时完成</span>
+                            <span class="stat-value">7/8</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">87.5%</span>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        
+        </div>
+
+        <div class="section">
+            
+        <div class="stats-grid">
+            <h3>副本统计</h3>
+            <div class="stats-cards">
+        
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">艾拉-卡拉，回响之城</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">12.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">25:54</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">奥尔达尼生态圆顶</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">13.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">30:25</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">赎罪大厅</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">14.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">41:59</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">0.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">水闸行动</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">12.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">31:34</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">圣焰隐修院</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">13.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">31:28</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">塔扎维什: 索·莉亚的宏图</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">13.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">25:01</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">塔扎维什: 琳彩天街</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">13.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">31:20</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="stat-card">
+                    <div class="card-header">
+                        <div class="dungeon-name">破晨号</div>
+                    </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">12.0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">平均时间</span>
+                            <span class="stat-value">27:24</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时率</span>
+                            <span class="stat-value">100.0%</span>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+        </div>
+        
+        </div>
+
+        <div class="section">
+            <h3>数据可视化</h3>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h4>等级分布</h4>
+                    <div class="chart-container">
+                        <canvas id="levelChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h4>副本表现</h4>
+                    <div class="chart-container">
+                        <canvas id="dungeonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>由 Mythic Performance Tracker 自动生成</p>
+    </div>
+
+    <script>
+        const chartsData = {"level_distribution": {"labels": ["+12", "+13", "+14"], "data": [3, 4, 1]}, "class_performance": {"生锈的斩牛刀": {"avg_level": 12.8, "count": 8}}, "dungeon_performance": {"艾拉-卡拉，回响之城": {"avg_level": 12.0, "timed_rate": 100.0}, "奥尔达尼生态圆顶": {"avg_level": 13.0, "timed_rate": 100.0}, "赎罪大厅": {"avg_level": 14.0, "timed_rate": 0.0}, "水闸行动": {"avg_level": 12.0, "timed_rate": 100.0}, "圣焰隐修院": {"avg_level": 13.0, "timed_rate": 100.0}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 13.0, "timed_rate": 100.0}, "塔扎维什: 琳彩天街": {"avg_level": 13.0, "timed_rate": 100.0}, "破晨号": {"avg_level": 12.0, "timed_rate": 100.0}}};
+
+        // 等级分布图
+        const levelCtx = document.getElementById('levelChart').getContext('2d');
+        new Chart(levelCtx, {
+            type: 'bar',
+            data: {
+                labels: chartsData.level_distribution.labels,
+                datasets: [{
+                    label: '数量',
+                    data: chartsData.level_distribution.data,
+                    backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+
+        // 副本表现图
+        const dungeonCtx = document.getElementById('dungeonChart').getContext('2d');
+        const dungeonLabels = Object.keys(chartsData.dungeon_performance);
+        const dungeonLevels = dungeonLabels.map(d => chartsData.dungeon_performance[d].avg_level);
+        const dungeonTimedRates = dungeonLabels.map(d => chartsData.dungeon_performance[d].timed_rate);
+
+        new Chart(dungeonCtx, {
+            type: 'radar',
+            data: {
+                labels: dungeonLabels,
+                datasets: [{
+                    label: '平均等级',
+                    data: dungeonLevels,
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: 'rgba(102, 126, 234, 1)',
+                    borderWidth: 2
+                }, {
+                    label: '限时率 (%)',
+                    data: dungeonTimedRates,
+                    backgroundColor: 'rgba(118, 75, 162, 0.2)',
+                    borderColor: 'rgba(118, 75, 162, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+        
