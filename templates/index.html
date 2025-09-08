@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Editor</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        input[type="text"] { width: 100%; padding: 5px; box-sizing: border-box; }
+        .save-button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        .save-button:hover { background-color: #45a049; }
+        .delete-button { background-color: #f44336; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+        .delete-button:hover { background-color: #da190b; }
+        .add-button { background-color: #008CBA; color: white; border: none; padding: 10px 20px; cursor: pointer; }
+        .add-button:hover { background-color: #007bb5; }
+    </style>
+</head>
+<body>
+    <h1>Excel Editor for character_info.xlsx</h1>
+    <div style="margin-bottom: 10px;">
+        <span id="unsaved-changes-indicator" style="color: red; font-weight: bold; display: none;">有未保存的更改！</span>
+    </div>
+    <form action="/save" method="post">
+        <table>
+            <thead>
+                <tr>
+                    {% for header in headers %}
+                    <th>{{ header }}</th>
+                    {% endfor %}
+                    <th>操作</th> {# Add a new column for actions #}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row_idx, row in data %}
+                <tr>
+                    {% for header in headers %}
+                    <td>
+                        <input type="text" name="{{ header }}_{{ row_idx }}" value="{{ row[header] if header in row else '' }}">
+                    </td>
+                    {% endfor %}
+                    <td>
+                        <button type="button" class="delete-button" onclick="deleteRow(this)">删除</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="button" class="save-button" onclick="saveChanges()">保存更改</button>
+    </form>
+
+    <button type="button" class="add-button" onclick="addRow()">添加新行</button>
+    <button type="button" class="refresh-button" onclick="location.reload()">刷新数据</button>
+
+    <script>
+        let hasUnsavedChanges = false;
+        const ADMIN_PASSWORD = "131415"; // 明文密码
+
+        function setUnsavedChanges(status) {
+            hasUnsavedChanges = status;
+            const indicator = document.getElementById('unsaved-changes-indicator');
+            if (indicator) {
+                indicator.style.display = status ? 'inline' : 'none';
+            }
+        }
+
+        function deleteRow(button) {
+            if (confirm("确定要删除此行吗？")) {
+                const password = prompt("请输入管理员密码以确认删除：");
+                if (password === ADMIN_PASSWORD) {
+                    const row = button.closest('tr');
+                    row.remove();
+                    setUnsavedChanges(true); // Mark as unsaved
+                    alert("行已删除（请点击保存更改以生效）。");
+                } else {
+                    alert("密码错误，删除操作已取消。");
+                }
+            }
+        }
+
+        function addRow() {
+            const tableBody = document.querySelector('table tbody');
+            const newRow = tableBody.insertRow();
+            const headers = Array.from(document.querySelectorAll('table thead th')).map(th => th.textContent).filter(header => header !== '操作');
+            const newRowIndex = tableBody.rows.length - 1; // Get the index for the new row
+
+            headers.forEach(header => {
+                const cell = newRow.insertCell();
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = `${header}_${newRowIndex}`; // Assign a unique name for the new row
+                input.value = '';
+                input.oninput = () => setUnsavedChanges(true); // Mark as unsaved on input
+                cell.appendChild(input);
+            });
+
+            const actionCell = newRow.insertCell();
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.className = 'delete-button';
+            deleteButton.textContent = '删除';
+            deleteButton.onclick = function() { deleteRow(this); };
+            actionCell.appendChild(deleteButton);
+
+            setUnsavedChanges(true); // Mark as unsaved
+        }
+
+        async function saveChanges() {
+            const tableBody = document.querySelector('table tbody');
+            const rows = Array.from(tableBody.rows);
+            const data = [];
+            const headers = Array.from(document.querySelectorAll('table thead th')).map(th => th.textContent).filter(header => header !== '操作');
+
+            rows.forEach((row, rowIndex) => {
+                const rowData = {};
+                headers.forEach((header, colIndex) => {
+                    const input = row.querySelector(`input[name="${header}_${rowIndex}"]`);
+                    if (input) {
+                        rowData[header] = input.value;
+                    } else {
+                        // For newly added rows, the name might not match the original row_idx
+                        // We need to find the input based on its position or a more robust naming
+                        // For now, let's assume inputs are in order
+                        const cellInput = row.cells[colIndex].querySelector('input');
+                        if (cellInput) {
+                            rowData[header] = cellInput.value;
+                        }
+                    }
+                });
+                data.push(rowData);
+            });
+
+            try {
+                const response = await fetch('/save_all', { // New endpoint for saving all data
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('更改已成功保存！');
+                    setUnsavedChanges(false); // No unsaved changes after successful save
+                    location.reload(); // Reload to reflect saved changes and update row indices
+                } else {
+                    alert('保存失败，请重试。');
+                }
+            } catch (error) {
+                console.error('保存时发生错误:', error);
+                alert('保存时发生错误。');
+            }
+        }
+
+        // Initialize input event listeners for existing rows
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('table tbody input[type="text"]').forEach(input => {
+                input.oninput = () => setUnsavedChanges(true);
+            });
+        });
+    </script>
+</body>
+</html>
