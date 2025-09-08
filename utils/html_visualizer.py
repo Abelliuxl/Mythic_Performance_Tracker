@@ -280,6 +280,9 @@ class HTMLVisualizer:
         """准备角色统计数据"""
         stats = []
         for _, char in char_df.iterrows():
+            # 打印职业名称进行调试
+            logger.info(f"处理角色: {char['角色名']}, 职业: '{char['职业']}'")
+
             char_data = result_df[result_df["角色名"] == char["角色名"]]
             # 只考虑有有效层数记录的运行
             char_data_valid_runs = char_data[pd.notna(char_data["限时层数"])]
@@ -297,7 +300,8 @@ class HTMLVisualizer:
                     "avg_level": round(avg_level, 1),
                     "timed_runs": timed_runs,
                     "total_runs": total_runs,
-                    "completion_rate": round((timed_runs / total_runs * 100), 1) if total_runs > 0 else 0 # 改为 completion_rate
+                    "completion_rate": round((timed_runs / total_runs * 100), 1) if total_runs > 0 else 0, # 改为 completion_rate
+                    "timed_runs_rate": round((timed_runs / total_runs * 100), 1) if total_runs > 0 else 0 # 新增限时完成率
                 })
             else: # 如果该角色没有有效记录，则所有统计数据为0
                 stats.append({
@@ -308,7 +312,8 @@ class HTMLVisualizer:
                     "avg_level": 0,
                     "timed_runs": 0,
                     "total_runs": 0,
-                    "completion_rate": 0 # 改为 completion_rate
+                    "completion_rate": 0, # 改为 completion_rate
+                    "timed_runs_rate": 0 # 新增限时完成率
                 })
         
         return stats

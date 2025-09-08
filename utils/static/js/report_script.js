@@ -331,6 +331,19 @@ new Chart(classCtx, {
     const hideEmptyCharsCheckbox = document.getElementById('hideEmptyChars');
     const characterSortBySelect = document.getElementById('characterSortBy');
 
+    let currentDisplayMetric = 'avg_level'; // 默认显示平均等级
+
+    function updateDisplayMetric(sortByValue) {
+        if (sortByValue.startsWith('avg_level')) {
+            currentDisplayMetric = 'avg_level';
+        } else if (sortByValue.startsWith('completion_rate')) {
+            currentDisplayMetric = 'completion_rate';
+        } else if (sortByValue.startsWith('timed_runs_rate')) { // 新增的限时完成率排序
+            currentDisplayMetric = 'timed_runs_rate';
+        }
+        // 如果是其他排序（职业、角色名），则不改变 currentDisplayMetric
+    }
+
     function renderCharacterStats(data) {
         console.log("Rendering character stats with data:", data);
         characterStatsContainer.innerHTML = ''; // 清空现有卡片
@@ -340,27 +353,40 @@ new Chart(classCtx, {
         }
         data.forEach(stat => {
             const classColor = chartsData.CLASS_COLOR_MAP[stat.class] || '888888'; // 从chartsData获取颜色，默认灰色
+            
+            let displayLabel = '';
+            let displayValue = '';
+
+            if (currentDisplayMetric === 'avg_level') {
+                displayLabel = '平均等级';
+                displayValue = typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A';
+            } else if (currentDisplayMetric === 'completion_rate') {
+                displayLabel = '通关率';
+                displayValue = typeof stat.completion_rate === 'number' ? stat.completion_rate.toFixed(2) : 'N/A' + '%';
+            } else if (currentDisplayMetric === 'timed_runs_rate') { // 新增的限时完成率
+                displayLabel = '限时完成率';
+                displayValue = typeof stat.timed_runs_rate === 'number' ? stat.timed_runs_rate.toFixed(2) : 'N/A' + '%';
+            } else {
+                // 默认显示平均等级，以防万一
+                displayLabel = '平均等级';
+                displayValue = typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A';
+            }
+
             const cardHtml = `
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #${classColor};">
+                <div class="character-stat-card">
+                    <div class="character-card-header" style="border-left-color: #${classColor};">
                         <div class="character-info">
                             <div class="character-name">${stat.character}</div>
                             <div class="character-server">${stat.server}</div>
                         </div>
                         <div class="character-class ${'class-' + stat.class}" style="color: #${classColor};">${stat.class}</div>
                     </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">${typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A'}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">通关率</span>
-                            <span class="stat-value">${typeof stat.completion_rate === 'number' ? stat.completion_rate.toFixed(2) : 'N/A'}%</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">${stat.timed_runs}/${stat.total_runs}</span>
+                    <div class="character-card-content">
+                        <div class="character-stat-row">
+                            <div class="character-stat-item">
+                                <span class="character-stat-label">${displayLabel}</span>
+                                <span class="character-stat-value">${displayValue}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -387,12 +413,16 @@ new Chart(classCtx, {
 
         // 排序
         const sortBy = characterSortBySelect.value;
+        updateDisplayMetric(sortBy); // 根据排序选项更新显示指标
+
         filteredData.sort((a, b) => {
             switch (sortBy) {
                 case 'avg_level_desc': return b.avg_level - a.avg_level;
                 case 'avg_level_asc': return a.avg_level - b.avg_level;
                 case 'completion_rate_desc': return b.completion_rate - a.completion_rate;
                 case 'completion_rate_asc': return a.completion_rate - b.completion_rate;
+                case 'timed_runs_rate_desc': return b.timed_runs_rate - a.timed_runs_rate; // 新增排序逻辑
+                case 'timed_runs_rate_asc': return a.timed_runs_rate - b.timed_runs_rate; // 新增排序逻辑
                 case 'class_asc': return a.class.localeCompare(b.class);
                 case 'class_desc': return b.class.localeCompare(a.class);
                 case 'character_name_asc': return a.character.localeCompare(b.character);

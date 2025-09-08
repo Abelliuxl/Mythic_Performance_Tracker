@@ -228,50 +228,29 @@ body.dark .character-stats-controls select {
     padding-right: 10px; /* 避免滚动条遮挡内容 */
 }
 
+/* 通用卡片样式 (副本统计将使用此样式) */
 .stat-card {
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增强阴影效果 */
-    border: 1px solid #e8e8e8; /* 添加浅灰色边框 */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e8e8e8;
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 增强hover阴影效果 */
-    border-color: #d0d0d0; /* hover时边框颜色加深 */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #d0d0d0;
 }
 
 .card-header {
     padding: 20px;
-    border-left: 5px solid #888888; /* 灰色 */
+    border-left: 5px solid #888888;
     border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.character-info {
-    flex: 1;
-}
-
-.character-name {
-    font-size: 1.2em;
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 5px;
-}
-
-.character-server {
-    color: #7f8c8d;
-    font-size: 0.9em;
-}
-
-.character-class {
-    font-weight: 600;
-    font-size: 1.1em;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* 更明显的灰色阴影 */
 }
 
 .dungeon-name {
@@ -286,7 +265,6 @@ body.dark .character-stats-controls select {
 
 .stat-item {
     display: flex;
-    /* 调整为左对齐，避免内容分散两边 */
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 12px;
@@ -295,13 +273,13 @@ body.dark .character-stats-controls select {
 }
 
 .stat-item .stat-label {
-    flex-basis: 50%; /* 给标签一个固定宽度，让值对齐 */
+    flex-basis: 50%;
     text-align: left;
 }
 
 .stat-item .stat-value {
-    flex-basis: 50%; /* 给值一个固定宽度，让值对齐 */
-    text-align: right; /* 值靠右对齐 */
+    flex-basis: 50%;
+    text-align: right;
 }
 
 .stat-item:last-child {
@@ -318,6 +296,104 @@ body.dark .character-stats-controls select {
     font-weight: 600;
     color: #2c3e50;
     font-size: 1.1em;
+}
+
+/* 角色统计卡片样式 (新的独立样式) */
+.character-stat-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增强阴影效果 */
+    border: 1px solid #e8e8e8; /* 添加浅灰色边框 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    display: flex; /* 使卡片内部的header和content水平排列 */
+    align-items: center; /* 垂直居中对齐 */
+    padding: 0; /* 移除卡片本身的内边距，由内部元素控制 */
+}
+
+.character-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 增强hover阴影效果 */
+    border-color: #d0d0d0; /* hover时边框颜色加深 */
+}
+
+.character-card-header {
+    padding: 15px 20px; /* 调整内边距 */
+    border-left: 5px solid #888888; /* 灰色 */
+    border-bottom: none; /* 移除底部边框 */
+    display: flex;
+    flex-direction: column; /* 使内部元素垂直排列 */
+    justify-content: center; /* 垂直居中 */
+    align-items: flex-start; /* 左对齐 */
+    flex-shrink: 0; /* 不允许收缩 */
+    width: 180px; /* 固定左侧宽度 */
+    height: 100%; /* 填充高度 */
+    position: relative; /* 用于定位职业 */
+}
+
+.character-info {
+    /* flex: 1; */ /* 移除flex:1，因为card-header是column布局 */
+    margin-bottom: 8px; /* 增加与职业之间的间距 */
+}
+
+.character-name {
+    font-size: 1.1em; /* 稍微减小字体 */
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 3px; /* 减小与服务器之间的间距 */
+}
+
+.character-server {
+    color: #7f8c8d;
+    font-size: 0.8em; /* 稍微减小字体 */
+}
+
+.character-class {
+    font-weight: 600;
+    font-size: 1em; /* 稍微减小字体 */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* 更明显的灰色阴影 */
+    /* 确保职业在card-header的底部 */
+    margin-top: auto; /* 将职业推到底部 */
+}
+
+.character-card-content {
+    padding: 15px; /* 稍微减小内边距 */
+    flex-grow: 1; /* 占据剩余空间 */
+    display: flex; /* 使内部stat-row水平排列 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+}
+
+.character-stat-row {
+    display: flex;
+    justify-content: space-around; /* 均匀分布项目 */
+    align-items: flex-start; /* 顶部对齐 */
+    flex-wrap: nowrap; /* 不允许换行，保持单行 */
+    gap: 15px; /* 项目之间的间距 */
+    width: 100%; /* 确保占据card-content的全部宽度 */
+}
+
+.character-stat-item {
+    display: flex;
+    flex-direction: column; /* 标签和值垂直排列 */
+    align-items: center; /* 居中对齐 */
+    flex: 1; /* 允许项目弹性伸缩 */
+    min-width: 80px; /* 确保每个项目有最小宽度 */
+    padding: 5px;
+}
+
+.character-stat-label {
+    color: #7f8c8d;
+    font-weight: 500;
+    font-size: 0.9em; /* 稍微减小标签字体 */
+    white-space: nowrap; /* 防止标签换行 */
+}
+
+.character-stat-value {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1em; /* 稍微减小值字体 */
+    margin-top: 5px; /* 标签和值之间的间距 */
 }
 
 .charts-container {
@@ -614,7 +690,7 @@ body.dark .character-stats-controls select {
 .class-武僧::before { content: "🥋"; }
 .class-圣骑士::before { content: "🛡️"; }
 .class-牧师::before { content: "😇"; }
-.class-潜行者::before { content: "🔪"; }
+.class-盗贼::before { content: "🔪" !important; }
 .class-萨满祭司::before { content: "⚡"; }
 .class-术士::before { content: "😈"; }
 .class-战士::before { content: "⚔️"; }

@@ -237,29 +237,50 @@ body.dark .character-stats-controls select {
     padding-right: 10px; /* 避免滚动条遮挡内容 */
 }
 
-/* 通用卡片样式 (副本统计将使用此样式) */
 .stat-card {
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e8e8e8;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增强阴影效果 */
+    border: 1px solid #e8e8e8; /* 添加浅灰色边框 */
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .stat-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: #d0d0d0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 增强hover阴影效果 */
+    border-color: #d0d0d0; /* hover时边框颜色加深 */
 }
 
 .card-header {
     padding: 20px;
-    border-left: 5px solid #888888;
+    border-left: 5px solid #888888; /* 灰色 */
     border-bottom: 1px solid #e0e0e0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.character-info {
+    flex: 1;
+}
+
+.character-name {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.character-server {
+    color: #7f8c8d;
+    font-size: 0.9em;
+}
+
+.character-class {
+    font-weight: 600;
+    font-size: 1.1em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* 更明显的灰色阴影 */
 }
 
 .dungeon-name {
@@ -274,6 +295,7 @@ body.dark .character-stats-controls select {
 
 .stat-item {
     display: flex;
+    /* 调整为左对齐，避免内容分散两边 */
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 12px;
@@ -282,13 +304,13 @@ body.dark .character-stats-controls select {
 }
 
 .stat-item .stat-label {
-    flex-basis: 50%;
+    flex-basis: 50%; /* 给标签一个固定宽度，让值对齐 */
     text-align: left;
 }
 
 .stat-item .stat-value {
-    flex-basis: 50%;
-    text-align: right;
+    flex-basis: 50%; /* 给值一个固定宽度，让值对齐 */
+    text-align: right; /* 值靠右对齐 */
 }
 
 .stat-item:last-child {
@@ -305,104 +327,6 @@ body.dark .character-stats-controls select {
     font-weight: 600;
     color: #2c3e50;
     font-size: 1.1em;
-}
-
-/* 角色统计卡片样式 (新的独立样式) */
-.character-stat-card {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* 增强阴影效果 */
-    border: 1px solid #e8e8e8; /* 添加浅灰色边框 */
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-    display: flex; /* 使卡片内部的header和content水平排列 */
-    align-items: center; /* 垂直居中对齐 */
-    padding: 0; /* 移除卡片本身的内边距，由内部元素控制 */
-}
-
-.character-stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* 增强hover阴影效果 */
-    border-color: #d0d0d0; /* hover时边框颜色加深 */
-}
-
-.character-card-header {
-    padding: 15px 20px; /* 调整内边距 */
-    border-left: 5px solid #888888; /* 灰色 */
-    border-bottom: none; /* 移除底部边框 */
-    display: flex;
-    flex-direction: column; /* 使内部元素垂直排列 */
-    justify-content: center; /* 垂直居中 */
-    align-items: flex-start; /* 左对齐 */
-    flex-shrink: 0; /* 不允许收缩 */
-    width: 180px; /* 固定左侧宽度 */
-    height: 100%; /* 填充高度 */
-    position: relative; /* 用于定位职业 */
-}
-
-.character-info {
-    /* flex: 1; */ /* 移除flex:1，因为card-header是column布局 */
-    margin-bottom: 8px; /* 增加与职业之间的间距 */
-}
-
-.character-name {
-    font-size: 1.1em; /* 稍微减小字体 */
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 3px; /* 减小与服务器之间的间距 */
-}
-
-.character-server {
-    color: #7f8c8d;
-    font-size: 0.8em; /* 稍微减小字体 */
-}
-
-.character-class {
-    font-weight: 600;
-    font-size: 1em; /* 稍微减小字体 */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* 更明显的灰色阴影 */
-    /* 确保职业在card-header的底部 */
-    margin-top: auto; /* 将职业推到底部 */
-}
-
-.character-card-content {
-    padding: 15px; /* 稍微减小内边距 */
-    flex-grow: 1; /* 占据剩余空间 */
-    display: flex; /* 使内部stat-row水平排列 */
-    align-items: center; /* 垂直居中 */
-    justify-content: center; /* 水平居中 */
-}
-
-.character-stat-row {
-    display: flex;
-    justify-content: space-around; /* 均匀分布项目 */
-    align-items: flex-start; /* 顶部对齐 */
-    flex-wrap: nowrap; /* 不允许换行，保持单行 */
-    gap: 15px; /* 项目之间的间距 */
-    width: 100%; /* 确保占据card-content的全部宽度 */
-}
-
-.character-stat-item {
-    display: flex;
-    flex-direction: column; /* 标签和值垂直排列 */
-    align-items: center; /* 居中对齐 */
-    flex: 1; /* 允许项目弹性伸缩 */
-    min-width: 80px; /* 确保每个项目有最小宽度 */
-    padding: 5px;
-}
-
-.character-stat-label {
-    color: #7f8c8d;
-    font-weight: 500;
-    font-size: 0.9em; /* 稍微减小标签字体 */
-    white-space: nowrap; /* 防止标签换行 */
-}
-
-.character-stat-value {
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 1em; /* 稍微减小值字体 */
-    margin-top: 5px; /* 标签和值之间的间距 */
 }
 
 .charts-container {
@@ -699,7 +623,7 @@ body.dark .character-stats-controls select {
 .class-武僧::before { content: "🥋"; }
 .class-圣骑士::before { content: "🛡️"; }
 .class-牧师::before { content: "😇"; }
-.class-盗贼::before { content: "🔪" !important; }
+.class-潜行者::before { content: "🔪"; }
 .class-萨满祭司::before { content: "⚡"; }
 .class-术士::before { content: "😈"; }
 .class-战士::before { content: "⚔️"; }
@@ -1348,7 +1272,7 @@ body.dark .character-stats-controls select {
                     <span class="afk-icon-text">点我试试</span>
                 </div>
             </div>
-            <p>生成时间: 2025-09-09 03:32:14</p>
+            <p>生成时间: 2025-09-09 02:32:01</p>
         </div>
 
         <div class="section">
@@ -1422,7 +1346,7 @@ body.dark .character-stats-controls select {
                         <tr>
                             <td class="sticky-col sticky-col-1">吴工</td>
                             <td class="sticky-col sticky-col-2" style="background-color: rgba(196, 31, 59, 0.1);">黑魔仙豹哥</td>
-            <td class="level-12" title="艾拉-卡拉，回响之城">+12</td><td class="level-13" title="奥尔达尼生态圆顶">+13</td><td class="level-12" title="赎罪大厅">+12</td><td class="level-12" title="水闸行动">+12</td><td class="level-13" title="圣焰隐修院">+13</td><td class="level-12" title="塔扎维什: 索·莉亚的宏图">+12</td><td class="level-13" title="塔扎维什: 琳彩天街">+13</td><td class="level-12" title="破晨号">+12</td></tr>
+            <td class="level-12" title="艾拉-卡拉，回响之城">+12</td><td class="level-13" title="奥尔达尼生态圆顶">+13</td><td class="level-12" title="赎罪大厅">+12</td><td class="level-12" title="水闸行动">+12</td><td class="level-13" title="圣焰隐修院">+13</td><td class="level-12" title="塔扎维什: 索·莉亚的宏图">+12</td><td class="level-12" title="塔扎维什: 琳彩天街">+12</td><td class="level-12" title="破晨号">+12</td></tr>
                         <tr>
                             <td class="sticky-col sticky-col-1">段总</td>
                             <td class="sticky-col sticky-col-2" style="background-color: rgba(255, 245, 105, 0.1);">生锈的斩牛刀</td>
@@ -1511,8 +1435,6 @@ body.dark .character-stats-controls select {
                         <option value="avg_level_asc">平均等级 (低到高)</option>
                         <option value="completion_rate_desc">通关率 (高到低)</option>
                         <option value="completion_rate_asc">通关率 (低到高)</option>
-                        <option value="timed_runs_rate_desc">限时完成率 (高到低)</option>
-                        <option value="timed_runs_rate_asc">限时完成率 (低到高)</option>
                         <option value="class_asc">职业 (A-Z)</option>
                         <option value="class_desc">职业 (Z-A)</option>
                         <option value="character_name_asc">角色名 (A-Z)</option>
@@ -1658,11 +1580,11 @@ body.dark .character-stats-controls select {
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.7</span>
+                            <span class="stat-value">10.5</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">26:52</span>
+                            <span class="stat-value">27:31</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">通关率</span>
@@ -1767,7 +1689,7 @@ body.dark .character-stats-controls select {
     <div id="emojiRainContainer"></div>
 
     <script>
-        const chartsData = {"level_distribution": {"labels": ["+6", "+7", "+8", "+9", "+10", "+11", "+12", "+13", "+14"], "data": [2, 2, 1, 3, 17, 10, 6, 10, 1]}, "class_performance": {"战士": {"avg_level": 9.8, "count": 16, "color": "#C79C6E"}, "死亡骑士": {"avg_level": 12.4, "count": 8, "color": "#C41F3B"}, "盗贼": {"avg_level": 13.0, "count": 8, "color": "#FFF569"}, "法师": {"avg_level": 10.4, "count": 8, "color": "#69CCF0"}, "猎人": {"avg_level": 7.0, "count": 4, "color": "#ABD473"}, "恶魔猎手": {"avg_level": 10.8, "count": 8, "color": "#A330C9"}}, "dungeon_performance": {"labels": ["回响", "圆顶", "赎罪", "水闸", "隐修院", "宏图", "天街", "破船"], "full_names": ["艾拉-卡拉，回响之城", "奥尔达尼生态圆顶", "赎罪大厅", "水闸行动", "圣焰隐修院", "塔扎维什: 索·莉亚的宏图", "塔扎维什: 琳彩天街", "破晨号"], "avg_levels": [10.7, 10.7, 11.0, 10.6, 10.4, 10.7, 10.7, 11.0], "timed_rates": [23.5, 41.2, 29.4, 41.2, 35.3, 35.3, 35.3, 35.3]}, "player_performance": {}, "character_stats_data": [{"player": "亮仔", "character": "嘭地一声", "server": "回音山", "class": "德鲁伊", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "亮仔", "character": "邪能肖战", "server": "回音山", "class": "恶魔猎手", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "吴工", "character": "体育老师", "server": "通灵学院", "class": "战士", "avg_level": 9.4, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5, "timed_runs_rate": 87.5}, {"player": "吴工", "character": "邀月", "server": "丽丽（四川）", "class": "骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "吴工", "character": "黑魔仙豹哥", "server": "死亡之翼", "class": "死亡骑士", "avg_level": 12.4, "timed_runs": 8, "total_runs": 8, "completion_rate": 100.0, "timed_runs_rate": 100.0}, {"player": "段总", "character": "生锈的斩牛刀", "server": "伊森利恩", "class": "盗贼", "avg_level": 13.0, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5, "timed_runs_rate": 87.5}, {"player": "段总", "character": "飞翔的潼瑜", "server": "伊森利恩", "class": "死亡骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "舒总", "character": "Fountine", "server": "图拉扬", "class": "法师", "avg_level": 10.4, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5, "timed_runs_rate": 87.5}, {"player": "舒总", "character": "天灵浴血", "server": "诺兹多姆", "class": "死亡骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "统皇", "character": "焦糖扁可颂", "server": "斯坦索姆", "class": "骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "统皇", "character": "本间芽衣芓", "server": "斯坦索姆", "class": "战士", "avg_level": 10.2, "timed_runs": 8, "total_runs": 8, "completion_rate": 100.0, "timed_runs_rate": 100.0}, {"player": "巨奶", "character": "傻瓜观测", "server": "影之哀伤", "class": "牧师", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "捷教授", "character": "四个自信", "server": "回音山", "class": "法师", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "蔡圣", "character": "莱恩弗尔特", "server": "神圣之歌", "class": "猎人", "avg_level": 7.0, "timed_runs": 3, "total_runs": 4, "completion_rate": 75.0, "timed_runs_rate": 75.0}, {"player": "蔡圣", "character": "亚妮艾丝", "server": "神圣之歌", "class": "牧师", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}, {"player": "蔡圣", "character": "亚里欧斯", "server": "神圣之歌", "class": "恶魔猎手", "avg_level": 10.8, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5, "timed_runs_rate": 87.5}, {"player": "元神", "character": "阿瘫", "server": "霜之哀伤", "class": "萨满", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0, "timed_runs_rate": 0}], "CLASS_COLOR_MAP": {"死亡骑士": "C41F3B", "恶魔猎手": "A330C9", "德鲁伊": "FF7D0A", "猎人": "ABD473", "法师": "69CCF0", "武僧": "00FF96", "圣骑士": "F58CBA", "骑士": "F58CBA", "牧师": "FFFFFF", "潜行者": "FFF569", "盗贼": "FFF569", "萨满": "0070DE", "术士": "9482C9", "战士": "C79C6E"}, "LAYER_COLOR_MAP": {"2": "E3F2FD", "3": "BBDEFB", "4": "81D4FA", "5": "4DD0E1", "6": "4DB6AC", "7": "81C784", "8": "AED581", "9": "DCE775", "10": "FFF176", "11": "FFD54F", "12": "FFB74D", "13": "FF8A65", "14": "F48FB1", "15": "F06292", "16": "EC407A", "17": "E91E63", "18": "F44336", "19": "D32F2F"}, "DUNGEON_COLOR_MAP": {"艾拉-卡拉，回响之城": "rgba(255, 99, 132, 0.8)", "奥尔达尼生态圆顶": "rgba(54, 162, 235, 0.8)", "赎罪大厅": "rgba(255, 206, 86, 0.8)", "水闸行动": "rgba(75, 192, 192, 0.8)", "圣焰隐修院": "rgba(153, 102, 255, 0.8)", "塔扎维什: 索·莉亚的宏图": "rgba(255, 159, 64, 0.8)", "塔扎维什: 琳彩天街": "rgba(199, 199, 199, 0.8)", "破晨号": "rgba(83, 102, 255, 0.8)"}, "DUNGEON_FULL_NAME_MAP": {"回响": "艾拉-卡拉，回响之城", "圆顶": "奥尔达尼生态圆顶", "赎罪": "赎罪大厅", "水闸": "水闸行动", "隐修院": "圣焰隐修院", "宏图": "塔扎维什: 索·莉亚的宏图", "天街": "塔扎维什: 琳彩天街", "破船": "破晨号"}, "DUNGEON_SHORT_NAME_MAP": {"艾拉-卡拉，回响之城": "回响", "奥尔达尼生态圆顶": "圆顶", "赎罪大厅": "赎罪", "水闸行动": "水闸", "圣焰隐修院": "隐修院", "塔扎维什: 索·莉亚的宏图": "宏图", "塔扎维什: 琳彩天街": "天街", "破晨号": "破船"}, "player_stats_data": {"player_labels": ["段总", "吴工", "舒总", "统皇", "蔡圣"], "datasets": [{"label": "艾拉-卡拉，回响之城", "backgroundColor": "rgba(255, 99, 132, 0.8)", "borderColor": "rgba(255, 99, 132, 1)", "borderWidth": 1, "data": [1.5, 1.38, 1.25, 1.25, 0.83], "meta": {"avg_levels": [12.0, 11.0, 10.0, 10.0, 10.0], "runs": [1, 2, 1, 1, 1]}}, {"label": "奥尔达尼生态圆顶", "backgroundColor": "rgba(54, 162, 235, 0.8)", "borderColor": "rgba(54, 162, 235, 1)", "borderWidth": 1, "data": [1.62, 1.44, 1.38, 1.38, 1.42], "meta": {"avg_levels": [13.0, 11.5, 11.0, 11.0, 8.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "赎罪大厅", "backgroundColor": "rgba(255, 206, 86, 0.8)", "borderColor": "rgba(255, 206, 86, 1)", "borderWidth": 1, "data": [1.75, 1.38, 1.25, 1.12, 0.92], "meta": {"avg_levels": [14.0, 11.0, 10.0, 9.0, 11.0], "runs": [1, 2, 1, 1, 1]}}, {"label": "水闸行动", "backgroundColor": "rgba(75, 192, 192, 0.8)", "borderColor": "rgba(75, 192, 192, 1)", "borderWidth": 1, "data": [1.62, 1.38, 1.25, 1.25, 1.58], "meta": {"avg_levels": [13.0, 11.0, 10.0, 10.0, 9.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "圣焰隐修院", "backgroundColor": "rgba(153, 102, 255, 0.8)", "borderColor": "rgba(153, 102, 255, 1)", "borderWidth": 1, "data": [1.62, 1.31, 1.25, 1.25, 1.58], "meta": {"avg_levels": [13.0, 10.5, 10.0, 10.0, 9.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "塔扎维什: 索·莉亚的宏图", "backgroundColor": "rgba(255, 159, 64, 0.8)", "borderColor": "rgba(255, 159, 64, 1)", "borderWidth": 1, "data": [1.62, 1.44, 1.38, 1.38, 1.42], "meta": {"avg_levels": [13.0, 11.5, 11.0, 11.0, 8.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "塔扎维什: 琳彩天街", "backgroundColor": "rgba(199, 199, 199, 0.8)", "borderColor": "rgba(199, 199, 199, 1)", "borderWidth": 1, "data": [1.62, 1.25, 1.25, 1.25, 0.92], "meta": {"avg_levels": [13.0, 10.0, 10.0, 10.0, 11.0], "runs": [1, 2, 1, 1, 1]}}, {"label": "破晨号", "backgroundColor": "rgba(83, 102, 255, 0.8)", "borderColor": "rgba(83, 102, 255, 1)", "borderWidth": 1, "data": [1.62, 1.31, 1.38, 1.38, 0.83], "meta": {"avg_levels": [13.0, 10.5, 11.0, 11.0, 10.0], "runs": [1, 2, 1, 1, 1]}}]}, "player_character_dungeon_stats": {"吴工": [{"character": "体育老师", "class": "战士", "server": "通灵学院", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 8.0, "timed_runs": 0, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 7.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 9.0, "timed_runs": 1, "total_runs": 1}}}, {"character": "黑魔仙豹哥", "class": "死亡骑士", "server": "死亡之翼", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}}}], "段总": [{"character": "生锈的斩牛刀", "class": "盗贼", "server": "伊森利恩", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 14.0, "timed_runs": 0, "total_runs": 1}, "水闸行动": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}}}], "舒总": [{"character": "Fountine", "class": "法师", "server": "图拉扬", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 0, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}}}], "统皇": [{"character": "本间芽衣芓", "class": "战士", "server": "斯坦索姆", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 9.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}}}], "蔡圣": [{"character": "莱恩弗尔特", "class": "猎人", "server": "神圣之歌", "dungeon_stats": {"奥尔达尼生态圆顶": {"avg_level": 6.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 6.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 9.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 7.0, "timed_runs": 0, "total_runs": 1}}}, {"character": "亚里欧斯", "class": "恶魔猎手", "server": "神圣之歌", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 0, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}}}]}};
+        const chartsData = {"level_distribution": {"labels": ["+6", "+7", "+8", "+9", "+10", "+11", "+12", "+13", "+14"], "data": [2, 2, 1, 3, 17, 10, 7, 9, 1]}, "class_performance": {"战士": {"avg_level": 9.8, "count": 16, "color": "#C79C6E"}, "死亡骑士": {"avg_level": 12.2, "count": 8, "color": "#C41F3B"}, "盗贼": {"avg_level": 13.0, "count": 8, "color": "#FFF569"}, "法师": {"avg_level": 10.4, "count": 8, "color": "#69CCF0"}, "猎人": {"avg_level": 7.0, "count": 4, "color": "#ABD473"}, "恶魔猎手": {"avg_level": 10.8, "count": 8, "color": "#A330C9"}}, "dungeon_performance": {"labels": ["回响", "圆顶", "赎罪", "水闸", "隐修院", "宏图", "天街", "破船"], "full_names": ["艾拉-卡拉，回响之城", "奥尔达尼生态圆顶", "赎罪大厅", "水闸行动", "圣焰隐修院", "塔扎维什: 索·莉亚的宏图", "塔扎维什: 琳彩天街", "破晨号"], "avg_levels": [10.7, 10.7, 11.0, 10.6, 10.4, 10.7, 10.5, 11.0], "timed_rates": [23.5, 41.2, 29.4, 41.2, 35.3, 35.3, 35.3, 35.3]}, "player_performance": {}, "character_stats_data": [{"player": "亮仔", "character": "嘭地一声", "server": "回音山", "class": "德鲁伊", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "亮仔", "character": "邪能肖战", "server": "回音山", "class": "恶魔猎手", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "吴工", "character": "体育老师", "server": "通灵学院", "class": "战士", "avg_level": 9.4, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5}, {"player": "吴工", "character": "邀月", "server": "丽丽（四川）", "class": "骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "吴工", "character": "黑魔仙豹哥", "server": "死亡之翼", "class": "死亡骑士", "avg_level": 12.2, "timed_runs": 8, "total_runs": 8, "completion_rate": 100.0}, {"player": "段总", "character": "生锈的斩牛刀", "server": "伊森利恩", "class": "盗贼", "avg_level": 13.0, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5}, {"player": "段总", "character": "飞翔的潼瑜", "server": "伊森利恩", "class": "死亡骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "舒总", "character": "Fountine", "server": "图拉扬", "class": "法师", "avg_level": 10.4, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5}, {"player": "舒总", "character": "天灵浴血", "server": "诺兹多姆", "class": "死亡骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "统皇", "character": "焦糖扁可颂", "server": "斯坦索姆", "class": "骑士", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "统皇", "character": "本间芽衣芓", "server": "斯坦索姆", "class": "战士", "avg_level": 10.2, "timed_runs": 8, "total_runs": 8, "completion_rate": 100.0}, {"player": "巨奶", "character": "傻瓜观测", "server": "影之哀伤", "class": "牧师", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "捷教授", "character": "四个自信", "server": "回音山", "class": "法师", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "蔡圣", "character": "莱恩弗尔特", "server": "神圣之歌", "class": "猎人", "avg_level": 7.0, "timed_runs": 3, "total_runs": 4, "completion_rate": 75.0}, {"player": "蔡圣", "character": "亚妮艾丝", "server": "神圣之歌", "class": "牧师", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}, {"player": "蔡圣", "character": "亚里欧斯", "server": "神圣之歌", "class": "恶魔猎手", "avg_level": 10.8, "timed_runs": 7, "total_runs": 8, "completion_rate": 87.5}, {"player": "元神", "character": "阿瘫", "server": "霜之哀伤", "class": "萨满", "avg_level": 0, "timed_runs": 0, "total_runs": 0, "completion_rate": 0}], "CLASS_COLOR_MAP": {"死亡骑士": "C41F3B", "恶魔猎手": "A330C9", "德鲁伊": "FF7D0A", "猎人": "ABD473", "法师": "69CCF0", "武僧": "00FF96", "圣骑士": "F58CBA", "骑士": "F58CBA", "牧师": "FFFFFF", "潜行者": "FFF569", "盗贼": "FFF569", "萨满": "0070DE", "术士": "9482C9", "战士": "C79C6E"}, "LAYER_COLOR_MAP": {"2": "E3F2FD", "3": "BBDEFB", "4": "81D4FA", "5": "4DD0E1", "6": "4DB6AC", "7": "81C784", "8": "AED581", "9": "DCE775", "10": "FFF176", "11": "FFD54F", "12": "FFB74D", "13": "FF8A65", "14": "F48FB1", "15": "F06292", "16": "EC407A", "17": "E91E63", "18": "F44336", "19": "D32F2F"}, "DUNGEON_COLOR_MAP": {"艾拉-卡拉，回响之城": "rgba(255, 99, 132, 0.8)", "奥尔达尼生态圆顶": "rgba(54, 162, 235, 0.8)", "赎罪大厅": "rgba(255, 206, 86, 0.8)", "水闸行动": "rgba(75, 192, 192, 0.8)", "圣焰隐修院": "rgba(153, 102, 255, 0.8)", "塔扎维什: 索·莉亚的宏图": "rgba(255, 159, 64, 0.8)", "塔扎维什: 琳彩天街": "rgba(199, 199, 199, 0.8)", "破晨号": "rgba(83, 102, 255, 0.8)"}, "DUNGEON_FULL_NAME_MAP": {"回响": "艾拉-卡拉，回响之城", "圆顶": "奥尔达尼生态圆顶", "赎罪": "赎罪大厅", "水闸": "水闸行动", "隐修院": "圣焰隐修院", "宏图": "塔扎维什: 索·莉亚的宏图", "天街": "塔扎维什: 琳彩天街", "破船": "破晨号"}, "DUNGEON_SHORT_NAME_MAP": {"艾拉-卡拉，回响之城": "回响", "奥尔达尼生态圆顶": "圆顶", "赎罪大厅": "赎罪", "水闸行动": "水闸", "圣焰隐修院": "隐修院", "塔扎维什: 索·莉亚的宏图": "宏图", "塔扎维什: 琳彩天街": "天街", "破晨号": "破船"}, "player_stats_data": {"player_labels": ["段总", "吴工", "舒总", "统皇", "蔡圣"], "datasets": [{"label": "艾拉-卡拉，回响之城", "backgroundColor": "rgba(255, 99, 132, 0.8)", "borderColor": "rgba(255, 99, 132, 1)", "borderWidth": 1, "data": [1.5, 1.38, 1.25, 1.25, 0.83], "meta": {"avg_levels": [12.0, 11.0, 10.0, 10.0, 10.0], "runs": [1, 2, 1, 1, 1]}}, {"label": "奥尔达尼生态圆顶", "backgroundColor": "rgba(54, 162, 235, 0.8)", "borderColor": "rgba(54, 162, 235, 1)", "borderWidth": 1, "data": [1.62, 1.44, 1.38, 1.38, 1.42], "meta": {"avg_levels": [13.0, 11.5, 11.0, 11.0, 8.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "赎罪大厅", "backgroundColor": "rgba(255, 206, 86, 0.8)", "borderColor": "rgba(255, 206, 86, 1)", "borderWidth": 1, "data": [1.75, 1.38, 1.25, 1.12, 0.92], "meta": {"avg_levels": [14.0, 11.0, 10.0, 9.0, 11.0], "runs": [1, 2, 1, 1, 1]}}, {"label": "水闸行动", "backgroundColor": "rgba(75, 192, 192, 0.8)", "borderColor": "rgba(75, 192, 192, 1)", "borderWidth": 1, "data": [1.62, 1.38, 1.25, 1.25, 1.58], "meta": {"avg_levels": [13.0, 11.0, 10.0, 10.0, 9.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "圣焰隐修院", "backgroundColor": "rgba(153, 102, 255, 0.8)", "borderColor": "rgba(153, 102, 255, 1)", "borderWidth": 1, "data": [1.62, 1.31, 1.25, 1.25, 1.58], "meta": {"avg_levels": [13.0, 10.5, 10.0, 10.0, 9.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "塔扎维什: 索·莉亚的宏图", "backgroundColor": "rgba(255, 159, 64, 0.8)", "borderColor": "rgba(255, 159, 64, 1)", "borderWidth": 1, "data": [1.62, 1.44, 1.38, 1.38, 1.42], "meta": {"avg_levels": [13.0, 11.5, 11.0, 11.0, 8.5], "runs": [1, 2, 1, 1, 2]}}, {"label": "塔扎维什: 琳彩天街", "backgroundColor": "rgba(199, 199, 199, 0.8)", "borderColor": "rgba(199, 199, 199, 1)", "borderWidth": 1, "data": [1.62, 1.19, 1.25, 1.25, 0.92], "meta": {"avg_levels": [13.0, 9.5, 10.0, 10.0, 11.0], "runs": [1, 2, 1, 1, 1]}}, {"label": "破晨号", "backgroundColor": "rgba(83, 102, 255, 0.8)", "borderColor": "rgba(83, 102, 255, 1)", "borderWidth": 1, "data": [1.62, 1.31, 1.38, 1.38, 0.83], "meta": {"avg_levels": [13.0, 10.5, 11.0, 11.0, 10.0], "runs": [1, 2, 1, 1, 1]}}]}, "player_character_dungeon_stats": {"吴工": [{"character": "体育老师", "class": "战士", "server": "通灵学院", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 8.0, "timed_runs": 0, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 7.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 9.0, "timed_runs": 1, "total_runs": 1}}}, {"character": "黑魔仙豹哥", "class": "死亡骑士", "server": "死亡之翼", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}}}], "段总": [{"character": "生锈的斩牛刀", "class": "盗贼", "server": "伊森利恩", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 12.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 14.0, "timed_runs": 0, "total_runs": 1}, "水闸行动": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}}}], "舒总": [{"character": "Fountine", "class": "法师", "server": "图拉扬", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 0, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}}}], "统皇": [{"character": "本间芽衣芓", "class": "战士", "server": "斯坦索姆", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 9.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}}}], "蔡圣": [{"character": "莱恩弗尔特", "class": "猎人", "server": "神圣之歌", "dungeon_stats": {"奥尔达尼生态圆顶": {"avg_level": 6.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 6.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 9.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 7.0, "timed_runs": 0, "total_runs": 1}}}, {"character": "亚里欧斯", "class": "恶魔猎手", "server": "神圣之歌", "dungeon_stats": {"艾拉-卡拉，回响之城": {"avg_level": 10.0, "timed_runs": 0, "total_runs": 1}, "奥尔达尼生态圆顶": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "赎罪大厅": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "水闸行动": {"avg_level": 13.0, "timed_runs": 1, "total_runs": 1}, "圣焰隐修院": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}, "塔扎维什: 琳彩天街": {"avg_level": 11.0, "timed_runs": 1, "total_runs": 1}, "破晨号": {"avg_level": 10.0, "timed_runs": 1, "total_runs": 1}}}]}};
 
 // 搜索与排序
 (function initSummaryTableHelpers() {
@@ -2100,19 +2022,6 @@ new Chart(classCtx, {
     const hideEmptyCharsCheckbox = document.getElementById('hideEmptyChars');
     const characterSortBySelect = document.getElementById('characterSortBy');
 
-    let currentDisplayMetric = 'avg_level'; // 默认显示平均等级
-
-    function updateDisplayMetric(sortByValue) {
-        if (sortByValue.startsWith('avg_level')) {
-            currentDisplayMetric = 'avg_level';
-        } else if (sortByValue.startsWith('completion_rate')) {
-            currentDisplayMetric = 'completion_rate';
-        } else if (sortByValue.startsWith('timed_runs_rate')) { // 新增的限时完成率排序
-            currentDisplayMetric = 'timed_runs_rate';
-        }
-        // 如果是其他排序（职业、角色名），则不改变 currentDisplayMetric
-    }
-
     function renderCharacterStats(data) {
         console.log("Rendering character stats with data:", data);
         characterStatsContainer.innerHTML = ''; // 清空现有卡片
@@ -2122,40 +2031,27 @@ new Chart(classCtx, {
         }
         data.forEach(stat => {
             const classColor = chartsData.CLASS_COLOR_MAP[stat.class] || '888888'; // 从chartsData获取颜色，默认灰色
-            
-            let displayLabel = '';
-            let displayValue = '';
-
-            if (currentDisplayMetric === 'avg_level') {
-                displayLabel = '平均等级';
-                displayValue = typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A';
-            } else if (currentDisplayMetric === 'completion_rate') {
-                displayLabel = '通关率';
-                displayValue = typeof stat.completion_rate === 'number' ? stat.completion_rate.toFixed(2) : 'N/A' + '%';
-            } else if (currentDisplayMetric === 'timed_runs_rate') { // 新增的限时完成率
-                displayLabel = '限时完成率';
-                displayValue = typeof stat.timed_runs_rate === 'number' ? stat.timed_runs_rate.toFixed(2) : 'N/A' + '%';
-            } else {
-                // 默认显示平均等级，以防万一
-                displayLabel = '平均等级';
-                displayValue = typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A';
-            }
-
             const cardHtml = `
-                <div class="character-stat-card">
-                    <div class="character-card-header" style="border-left-color: #${classColor};">
+                <div class="stat-card">
+                    <div class="card-header" style="border-left-color: #${classColor};">
                         <div class="character-info">
                             <div class="character-name">${stat.character}</div>
                             <div class="character-server">${stat.server}</div>
                         </div>
                         <div class="character-class ${'class-' + stat.class}" style="color: #${classColor};">${stat.class}</div>
                     </div>
-                    <div class="character-card-content">
-                        <div class="character-stat-row">
-                            <div class="character-stat-item">
-                                <span class="character-stat-label">${displayLabel}</span>
-                                <span class="character-stat-value">${displayValue}</span>
-                            </div>
+                    <div class="card-content">
+                        <div class="stat-item">
+                            <span class="stat-label">平均等级</span>
+                            <span class="stat-value">${typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A'}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">通关率</span>
+                            <span class="stat-value">${typeof stat.completion_rate === 'number' ? stat.completion_rate.toFixed(2) : 'N/A'}%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">限时完成</span>
+                            <span class="stat-value">${stat.timed_runs}/${stat.total_runs}</span>
                         </div>
                     </div>
                 </div>
@@ -2182,16 +2078,12 @@ new Chart(classCtx, {
 
         // 排序
         const sortBy = characterSortBySelect.value;
-        updateDisplayMetric(sortBy); // 根据排序选项更新显示指标
-
         filteredData.sort((a, b) => {
             switch (sortBy) {
                 case 'avg_level_desc': return b.avg_level - a.avg_level;
                 case 'avg_level_asc': return a.avg_level - b.avg_level;
                 case 'completion_rate_desc': return b.completion_rate - a.completion_rate;
                 case 'completion_rate_asc': return a.completion_rate - b.completion_rate;
-                case 'timed_runs_rate_desc': return b.timed_runs_rate - a.timed_runs_rate; // 新增排序逻辑
-                case 'timed_runs_rate_asc': return a.timed_runs_rate - b.timed_runs_rate; // 新增排序逻辑
                 case 'class_asc': return a.class.localeCompare(b.class);
                 case 'class_desc': return b.class.localeCompare(a.class);
                 case 'character_name_asc': return a.character.localeCompare(b.character);
