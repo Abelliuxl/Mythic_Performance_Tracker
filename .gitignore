@@ -47,11 +47,7 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-data/*.xlsx
-!data/*.xlsx.template
-data/character_info_backup.xlsx
-data/result_backup.xlsx
-data/result.xlsx
+data/*.xlsx.template
 logs/*.txt
 reports/*.html
 reports/mythic_performance_report_*.html
