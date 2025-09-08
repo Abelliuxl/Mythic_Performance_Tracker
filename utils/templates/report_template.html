@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* CSS will be injected here */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-row">
+                <h1>😈 邪恶小团体大秘境统计</h1>
+                <div class="afk-icon-container">
+                    <span id="afk-icon" title="拯救AFK玩家">❤️</span>
+                    <span class="afk-icon-text">点我试试</span>
+                </div>
+            </div>
+            <p>生成时间: {{GENERATION_TIME}}</p>
+        </div>
+
+        <div class="section">
+            {{KPI_CARDS}}
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h3>📋 限时总览</h3>
+                <div class="summary-table-controls">
+                    <label for="hideUntimedSummaryRows">
+                        <input type="checkbox" id="hideUntimedSummaryRows" checked> 隐藏无限时记录
+                    </label>
+                </div>
+            </div>
+            {{SUMMARY_TABLE}}
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h3>📈 玩家统计</h3>
+            </div>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h4>👑 玩家表现</h4>
+                    <div class="chart-container">
+                        <canvas id="playerChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h3>🧙 角色统计</h3>
+                <div class="character-stats-controls">
+                    <label for="hideEmptyChars">
+                        <input type="checkbox" id="hideEmptyChars" checked> 隐藏无记录角色
+                    </label>
+                    <select id="characterSortBy">
+                        <option value="avg_level_desc">平均等级 (高到低)</option>
+                        <option value="avg_level_asc">平均等级 (低到高)</option>
+                        <option value="completion_rate_desc">通关率 (高到低)</option>
+                        <option value="completion_rate_asc">通关率 (低到高)</option>
+                        <option value="class_asc">职业 (A-Z)</option>
+                        <option value="class_desc">职业 (Z-A)</option>
+                        <option value="character_name_asc">角色名 (A-Z)</option>
+                        <option value="character_name_desc">角色名 (Z-A)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="stats-cards" id="characterStatsCards">
+                <!-- Character stats will be rendered here by JS -->
+            </div>
+        </div>
+
+        <div class="section">
+            {{DUNGEON_STATS}}
+        </div>
+
+        <div class="section">
+            <h3>✨ 数据可视化</h3>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h4>📊 等级分布</h4>
+                    <div class="chart-container">
+                        <canvas id="levelChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h4>⚔️ 副本表现</h4>
+                    <div class="chart-container">
+                        <canvas id="dungeonChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h4>🧑‍🤝‍🧑 职业平均层数</h4>
+                    <div class="chart-container">
+                        <canvas id="classChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>由 Mythic Performance Tracker 自动生成</p>
+    </div>
+
+    <div id="playerDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <div class="modal-body">
+                <canvas id="playerDetailChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- AFK Player Modal -->
+    <div id="afkPlayerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="afkCloseButton">&times;</span>
+            <h2>拯救AFK玩家</h2>
+            <div class="afk-player-list" id="afkPlayerList">
+                <!-- AFK players will be loaded here -->
+            </div>
+            <div class="love-progress-container">
+                <div class="love-progress-bar" id="loveProgressBar"></div>
+                <span id="loveCount">0/10</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emoji Rain Container -->
+    <div id="emojiRainContainer"></div>
+
+    <script>
+        /* JavaScript will be injected here */
+    </script>
+</body>
+</html>
