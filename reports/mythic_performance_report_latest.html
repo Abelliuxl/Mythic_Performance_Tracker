@@ -99,9 +99,6 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            position: sticky;
-            top: 0;
-            z-index: 1;
         }
 
         .summary-table tr:nth-child(even) {
@@ -116,132 +113,132 @@
         /* 等级颜色样式 */
         .level-empty {
             background-color: #DDDDDD !important;
-            color: #4b5563;
+            color: #999;
         }
 
         
         .level-2 {
             background-color: #E3F2FD !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-3 {
             background-color: #BBDEFB !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-4 {
             background-color: #81D4FA !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-5 {
             background-color: #4DD0E1 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-6 {
             background-color: #4DB6AC !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-7 {
             background-color: #81C784 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-8 {
             background-color: #AED581 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-9 {
             background-color: #DCE775 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-10 {
             background-color: #FFF176 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-11 {
             background-color: #FFD54F !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-12 {
             background-color: #FFB74D !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-13 {
             background-color: #FF8A65 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-14 {
             background-color: #F48FB1 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-15 {
             background-color: #F06292 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-16 {
             background-color: #EC407A !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-17 {
             background-color: #E91E63 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-18 {
             background-color: #F44336 !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
 
         .level-19 {
             background-color: #D32F2F !important;
-            color: #1f2937;
+            color: white;
             font-weight: bold;
         }
         
@@ -392,191 +389,33 @@
                 font-size: 0.9em;
             }
         }
-
-        /* KPI Cards */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        .kpi-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-        .kpi-label {
-            color: #6b7280;
-            font-size: 0.9em;
-        }
-        .kpi-value {
-            color: #111827;
-            font-size: 1.6em;
-            font-weight: 700;
-            margin-top: 6px;
-        }
-
-        /* 新增：工具栏与按钮样式 */
-        .header-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 6px;
-        }
-        .header-actions { display: flex; gap: 8px; }
-        .btn {
-            background: #eef2ff;
-            color: #374151;
-            border: 1px solid #e5e7eb;
-            padding: 8px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: .2s ease;
-        }
-        .btn:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(0,0,0,.08); }
-
-        .table-wrapper { overflow: auto; }
-        .table-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin: 10px 0 8px;
-        }
-        .toolbar-actions { display: flex; gap: 8px; }
-        .search-input {
-            width: 260px;
-            background: #fff;
-            color: #111827;
-            border: 1px solid #e5e7eb;
-            border-radius: 10px;
-            padding: 8px 12px;
-            outline: none;
-        }
-        .search-input::placeholder { color: #9ca3af; }
-
-        /* 新增：冻结前两列与可排序样式 */
-        .sticky-col { position: sticky; background: white; z-index: 2; }
-        .sticky-col-1 { left: 0; }
-        .sticky-col-2 { left: 140px; z-index: 3; }
-        .summary-table th:nth-child(1), .summary-table td:nth-child(1) { min-width: 140px; width: 140px; text-align: left; padding-left: 14px; }
-        .summary-table th:nth-child(2), .summary-table td:nth-child(2) { min-width: 160px; width: 160px; text-align: left; padding-left: 14px; }
-        .summary-table th.sortable { cursor: pointer; position: sticky; top: 0; }
-        .summary-table th.sortable[data-sort="asc"]::after { content: " ▲"; font-size: 12px; }
-        .summary-table th.sortable[data-sort="desc"]::after { content: " ▼"; font-size: 12px; }
-
-        /* 新增：暗色模式覆盖 */
-        body.dark {
-            background: radial-gradient(800px 400px at 15% 0%, rgba(99,102,241,.12), transparent 60%),
-                        radial-gradient(800px 400px at 85% 0%, rgba(139,92,246,.1), transparent 60%),
-                        #0f172a;
-            color: #e5e7eb;
-        }
-        body.dark .header,
-        body.dark .section,
-        body.dark .chart-card,
-        body.dark .kpi-card { background: #111827; color: #e5e7eb; border-color: #1f2937; }
-        body.dark .kpi-label { color: #9ca3af; }
-        body.dark .kpi-value { color: #e5e7eb; }
-        body.dark .summary-table { background: #0f1626; }
-        body.dark .summary-table th { background: linear-gradient(45deg, #4f46e5, #7c3aed); color: #fff; }
-        body.dark .summary-table td { background: #0f1626; color: #e5e7eb; border-color: #1f2937; }
-        body.dark .summary-table tr:hover td { background: rgba(99,102,241,.12); }
-        body.dark .search-input { background: #0f1626; color: #e5e7eb; border-color: #1f2937; }
-        body.dark .btn { background: #1f2937; color: #e5e7eb; border-color: #374151; }
-        body.dark .level-empty { background-color: rgba(156,163,175,.25) !important; color: #e5e7eb; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="header-row">
-                <h1>Mythic+ 性能追踪报告</h1>
-                <div class="header-actions">
-                    <button id="themeToggle" class="btn">🌓 主题</button>
-                </div>
-            </div>
-            <p>生成时间: 2025-09-08 17:38:20</p>
-        </div>
-
-        <div class="section">
-            
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-label">总运行数</div>
-                <div class="kpi-value">64</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">角色数量</div>
-                <div class="kpi-value">8</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">限时率</div>
-                <div class="kpi-value">45.3%</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">平均层数</div>
-                <div class="kpi-value">10.4</div>
-            </div>
-        </div>
-        
+            <h1>Mythic+ 性能追踪报告</h1>
+            <p>生成时间: 2025-09-08 17:50:28</p>
         </div>
 
         
         <div class="table-container">
-            <div class="table-toolbar">
-                <h3>限时总览</h3>
-                <div class="toolbar-actions">
-                    <input id="summarySearch" class="search-input" type="search" placeholder="搜索玩家/角色/副本..." />
-                    <button id="clearSearch" class="btn">清除</button>
-                </div>
-            </div>
+            <h3>限时总览</h3>
             <div class="table-wrapper">
-                <table id="summaryTable" class="summary-table">
+                <table class="summary-table">
                     <thead>
                         <tr>
-                            <th class="sticky-col sticky-col-1 sortable" data-type="text">玩家</th>
-                            <th class="sticky-col sticky-col-2 sortable" data-type="text">角色名</th>
-        <th class="sortable" data-type="level">艾拉-卡拉，回响之城</th><th class="sortable" data-type="level">奥尔达尼生态圆顶</th><th class="sortable" data-type="level">赎罪大厅</th><th class="sortable" data-type="level">水闸行动</th><th class="sortable" data-type="level">圣焰隐修院</th><th class="sortable" data-type="level">塔扎维什: 索·莉亚的宏图</th><th class="sortable" data-type="level">塔扎维什: 琳彩天街</th><th class="sortable" data-type="level">破晨号</th>
+                            <th>玩家</th>
+                            <th>角色名</th>
+        <th>圣焰隐修院</th><th>塔扎维什: 琳彩天街</th><th>塔扎维什: 索·莉亚的宏图</th><th>奥尔达尼生态圆顶</th><th>水闸行动</th><th>破晨号</th><th>艾拉-卡拉，回响之城</th><th>赎罪大厅</th>
                         </tr>
                     </thead>
                     <tbody>
         
                         <tr>
-                            <td class="sticky-col sticky-col-1">吴工</td>
-                            <td class="sticky-col sticky-col-2">体育老师</td>
-            <td class="level-10">+10</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-8">+8*</td><td class="level-9">+9</td><td class="level-7">+7</td><td class="level-9">+9</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">吴工</td>
-                            <td class="sticky-col sticky-col-2">邀月</td>
-            <td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">段总</td>
-                            <td class="sticky-col sticky-col-2">生锈的斩牛刀</td>
-            <td class="level-12">+12</td><td class="level-13">+13</td><td class="level-14">+14*</td><td class="level-12">+12</td><td class="level-13">+13</td><td class="level-13">+13</td><td class="level-13">+13</td><td class="level-12">+12</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">段总</td>
-                            <td class="sticky-col sticky-col-2">飞翔的潼瑜</td>
-            <td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">舒总</td>
-                            <td class="sticky-col sticky-col-2">Fountine</td>
-            <td class="level-10">+10*</td><td class="level-11">+11</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-11">+11</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">舒总</td>
-                            <td class="sticky-col sticky-col-2">天灵浴血</td>
-            <td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">统皇</td>
-                            <td class="sticky-col sticky-col-2">焦糖扁可颂</td>
-            <td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td><td class="level-empty">-</td></tr>
-                        <tr>
-                            <td class="sticky-col sticky-col-1">统皇</td>
-                            <td class="sticky-col sticky-col-2">本间芽衣芓</td>
-            <td class="level-10">+10</td><td class="level-11">+11</td><td class="level-9">+9</td><td class="level-10">+10</td><td class="level-5">+5</td><td class="level-10">+10</td><td class="level-10">+10</td><td class="level-11">+11</td></tr>
+                            <td>段总</td>
+                            <td>生锈的斩牛刀</td>
+            <td class="level-13">+13</td><td class="level-13">+13</td><td class="level-13">+13</td><td class="level-13">+13</td><td class="level-12">+12</td><td class="level-12">+12</td><td class="level-12">+12</td><td class="level-14">+14*</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -589,54 +428,6 @@
             <h3>角色统计</h3>
             <div class="stats-cards">
         
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #C79C6E;">
-                        <div class="character-info">
-                            <div class="character-name">体育老师</div>
-                            <div class="character-server">通灵学院</div>
-                        </div>
-                        <div class="character-class" style="color: #C79C6E;">战士</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">9.1</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">7/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">87.5%</span>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #F58CBA;">
-                        <div class="character-info">
-                            <div class="character-name">邀月</div>
-                            <div class="character-server">丽丽（四川）</div>
-                        </div>
-                        <div class="character-class" style="color: #F58CBA;">骑士</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">nan</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">0/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">0.0%</span>
-                        </div>
-                    </div>
-                </div>
-            
                 <div class="stat-card">
                     <div class="card-header" style="border-left-color: #FFF569;">
                         <div class="character-info">
@@ -661,126 +452,6 @@
                     </div>
                 </div>
             
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #C41F3B;">
-                        <div class="character-info">
-                            <div class="character-name">飞翔的潼瑜</div>
-                            <div class="character-server">伊森利恩</div>
-                        </div>
-                        <div class="character-class" style="color: #C41F3B;">死亡骑士</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">nan</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">0/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">0.0%</span>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #69CCF0;">
-                        <div class="character-info">
-                            <div class="character-name">Fountine</div>
-                            <div class="character-server">图拉扬</div>
-                        </div>
-                        <div class="character-class" style="color: #69CCF0;">法师</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.2</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">7/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">87.5%</span>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #C41F3B;">
-                        <div class="character-info">
-                            <div class="character-name">天灵浴血</div>
-                            <div class="character-server">诺兹多姆</div>
-                        </div>
-                        <div class="character-class" style="color: #C41F3B;">死亡骑士</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">nan</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">0/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">0.0%</span>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #F58CBA;">
-                        <div class="character-info">
-                            <div class="character-name">焦糖扁可颂</div>
-                            <div class="character-server">斯坦索姆</div>
-                        </div>
-                        <div class="character-class" style="color: #F58CBA;">骑士</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">nan</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">0/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">0.0%</span>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="stat-card">
-                    <div class="card-header" style="border-left-color: #C79C6E;">
-                        <div class="character-info">
-                            <div class="character-name">本间芽衣芓</div>
-                            <div class="character-server">斯坦索姆</div>
-                        </div>
-                        <div class="character-class" style="color: #C79C6E;">战士</div>
-                    </div>
-                    <div class="card-content">
-                        <div class="stat-item">
-                            <span class="stat-label">平均等级</span>
-                            <span class="stat-value">9.5</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时完成</span>
-                            <span class="stat-value">8/8</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">限时率</span>
-                            <span class="stat-value">100.0%</span>
-                        </div>
-                    </div>
-                </div>
-            
             </div>
         </div>
         
@@ -799,15 +470,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.5</span>
+                            <span class="stat-value">12.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">13:14</span>
+                            <span class="stat-value">25:54</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">37.5%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -819,15 +490,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">11.2</span>
+                            <span class="stat-value">13.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">12:41</span>
+                            <span class="stat-value">30:25</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">50.0%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -839,15 +510,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.8</span>
+                            <span class="stat-value">14.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">14:52</span>
+                            <span class="stat-value">41:59</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">37.5%</span>
+                            <span class="stat-value">0.0%</span>
                         </div>
                     </div>
                 </div>
@@ -859,15 +530,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.5</span>
+                            <span class="stat-value">12.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">13:33</span>
+                            <span class="stat-value">31:34</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">50.0%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -879,15 +550,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">9.0</span>
+                            <span class="stat-value">13.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">14:50</span>
+                            <span class="stat-value">31:28</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">37.5%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -899,15 +570,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.5</span>
+                            <span class="stat-value">13.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">10:54</span>
+                            <span class="stat-value">25:01</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">50.0%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -919,15 +590,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.0</span>
+                            <span class="stat-value">13.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">12:38</span>
+                            <span class="stat-value">31:20</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">50.0%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -939,15 +610,15 @@
                     <div class="card-content">
                         <div class="stat-item">
                             <span class="stat-label">平均等级</span>
-                            <span class="stat-value">10.8</span>
+                            <span class="stat-value">12.0</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">平均时间</span>
-                            <span class="stat-value">12:05</span>
+                            <span class="stat-value">27:24</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">限时率</span>
-                            <span class="stat-value">50.0%</span>
+                            <span class="stat-value">100.0%</span>
                         </div>
                     </div>
                 </div>
@@ -972,12 +643,6 @@
                         <canvas id="dungeonChart"></canvas>
                     </div>
                 </div>
-                <div class="chart-card">
-                    <h4>职业平均层数</h4>
-                    <div class="chart-container">
-                        <canvas id="classChart"></canvas>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -987,77 +652,7 @@
     </div>
 
     <script>
-        const chartsData = {"level_distribution": {"labels": ["+5", "+7", "+8", "+9", "+10", "+11", "+12", "+13", "+14"], "data": [1, 1, 1, 3, 14, 4, 3, 4, 1]}, "class_performance": {"战士": {"avg_level": 9.3, "count": 16, "color": "#C79C6E"}, "盗贼": {"avg_level": 12.8, "count": 8, "color": "#FFF569"}, "法师": {"avg_level": 10.2, "count": 8, "color": "#69CCF0"}}, "dungeon_performance": {"艾拉-卡拉，回响之城": {"avg_level": 10.5, "timed_rate": 37.5}, "奥尔达尼生态圆顶": {"avg_level": 11.2, "timed_rate": 50.0}, "赎罪大厅": {"avg_level": 10.8, "timed_rate": 37.5}, "水闸行动": {"avg_level": 10.5, "timed_rate": 50.0}, "圣焰隐修院": {"avg_level": 9.0, "timed_rate": 37.5}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 10.5, "timed_rate": 50.0}, "塔扎维什: 琳彩天街": {"avg_level": 10.0, "timed_rate": 50.0}, "破晨号": {"avg_level": 10.8, "timed_rate": 50.0}}};
-
-        // 主题切换
-        (function initTheme() {
-            const KEY = 'mpt-theme';
-            const saved = localStorage.getItem(KEY);
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (saved === 'dark' || (!saved && prefersDark)) {
-                document.body.classList.add('dark');
-            }
-            const btn = document.getElementById('themeToggle');
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    document.body.classList.toggle('dark');
-                    localStorage.setItem(KEY, document.body.classList.contains('dark') ? 'dark' : 'light');
-                });
-            }
-        })();
-
-        // 搜索与排序
-        (function initSummaryTableHelpers() {
-            const table = document.getElementById('summaryTable');
-            if (!table) return;
-            const input = document.getElementById('summarySearch');
-            const clearBtn = document.getElementById('clearSearch');
-
-            function normalizeText(s) { return (s || '').toString().toLowerCase(); }
-            function filterRows() {
-                const q = normalizeText(input.value);
-                const rows = table.tBodies[0].rows;
-                for (let i = 0; i < rows.length; i++) {
-                    const cells = Array.from(rows[i].cells).map(td => normalizeText(td.textContent));
-                    const ok = q === '' || cells.some(txt => txt.includes(q));
-                    rows[i].style.display = ok ? '' : 'none';
-                }
-            }
-            if (input) input.addEventListener('input', filterRows);
-            if (clearBtn) clearBtn.addEventListener('click', () => { input.value = ''; filterRows(); input.focus(); });
-
-            function parseLevel(text) {
-                if (!text || text === '-') return Number.NEGATIVE_INFINITY;
-                const n = parseInt(text.replace('+', ''));
-                return isNaN(n) ? Number.NEGATIVE_INFINITY : n;
-            }
-            function sortTable(colIndex, type, asc) {
-                const tbody = table.tBodies[0];
-                const rows = Array.from(tbody.rows).filter(r => r.style.display !== 'none');
-                const getVal = (row) => {
-                    const txt = row.cells[colIndex]?.textContent?.trim() || '';
-                    if (type === 'level') return parseLevel(txt);
-                    if (!isNaN(parseFloat(txt)) && isFinite(txt)) return parseFloat(txt);
-                    return txt.toLowerCase();
-                };
-                rows.sort((a,b) => { const va=getVal(a), vb=getVal(b); if (va<vb) return asc?-1:1; if (va>vb) return asc?1:-1; return 0; });
-                rows.forEach(r => tbody.appendChild(r));
-            }
-            const headCells = table.tHead.rows[0].cells;
-            let sortState = {};
-            Array.from(headCells).forEach((th, i) => {
-                if (!th.classList.contains('sortable')) return;
-                th.addEventListener('click', () => {
-                    const type = th.getAttribute('data-type') || 'text';
-                    const prev = sortState[i] || false;
-                    const nextAsc = !prev;
-                    sortState = { [i]: nextAsc };
-                    sortTable(i, type, nextAsc);
-                    Array.from(headCells).forEach(h => h.removeAttribute('data-sort'));
-                    th.setAttribute('data-sort', nextAsc ? 'asc' : 'desc');
-                });
-            });
-        })();
+        const chartsData = {"level_distribution": {"labels": ["+12", "+13", "+14"], "data": [3, 4, 1]}, "class_performance": {"生锈的斩牛刀": {"avg_level": 12.8, "count": 8}}, "dungeon_performance": {"艾拉-卡拉，回响之城": {"avg_level": 12.0, "timed_rate": 100.0}, "奥尔达尼生态圆顶": {"avg_level": 13.0, "timed_rate": 100.0}, "赎罪大厅": {"avg_level": 14.0, "timed_rate": 0.0}, "水闸行动": {"avg_level": 12.0, "timed_rate": 100.0}, "圣焰隐修院": {"avg_level": 13.0, "timed_rate": 100.0}, "塔扎维什: 索·莉亚的宏图": {"avg_level": 13.0, "timed_rate": 100.0}, "塔扎维什: 琳彩天街": {"avg_level": 13.0, "timed_rate": 100.0}, "破晨号": {"avg_level": 12.0, "timed_rate": 100.0}}};
 
         // 等级分布图
         const levelCtx = document.getElementById('levelChart').getContext('2d');
@@ -1123,32 +718,6 @@
                     r: {
                         beginAtZero: true
                     }
-                }
-            }
-        });
-
-        // 职业平均层数图
-        const classCtx = document.getElementById('classChart').getContext('2d');
-        const classLabels = Object.keys(chartsData.class_performance);
-        const classLevels = classLabels.map(c => chartsData.class_performance[c].avg_level);
-        const classColors = classLabels.map(c => chartsData.class_performance[c].color || 'rgba(156,163,175,0.8)');
-
-        new Chart(classCtx, {
-            type: 'bar',
-            data: {
-                labels: classLabels,
-                datasets: [{
-                    label: '平均层数',
-                    data: classLevels,
-                    backgroundColor: classColors,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { beginAtZero: true }
                 }
             }
         });
