@@ -33,16 +33,6 @@ def click_update_with_retry(driver, url, max_attempts=3):
             # 尝试多种点击策略
             success = False
             
-            # 策略1：直接点击
-            if not success:
-                try:
-                    update_button = wait.until(EC.element_to_be_clickable((By.ID, "update-link")))
-                    update_button.click()
-                    logger.success(f"策略1成功：直接点击 Update（第 {attempt} 次）：{url}")
-                    success = True
-                except Exception as e:
-                    logger.info(f"策略1失败：{e}")
-            
             # 策略2：使用JavaScript点击
             if not success:
                 try:
@@ -52,6 +42,16 @@ def click_update_with_retry(driver, url, max_attempts=3):
                     success = True
                 except Exception as e:
                     logger.info(f"策略2失败：{e}")
+            
+            # 策略1：直接点击
+            if not success:
+                try:
+                    update_button = wait.until(EC.element_to_be_clickable((By.ID, "update-link")))
+                    update_button.click()
+                    logger.success(f"策略1成功：直接点击 Update（第 {attempt} 次）：{url}")
+                    success = True
+                except Exception as e:
+                    logger.info(f"策略1失败：{e}")
             
             # 策略3：使用ActionChains
             if not success:
