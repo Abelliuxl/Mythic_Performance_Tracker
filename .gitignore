@@ -47,11 +47,11 @@ ehthumbs.db
 Thumbs.db
 
 # Project specific
-data/*.xlsx.template
+/data/*
+!/data/character_info.xlsx.template
 logs/*.txt
-reports/*.html
-reports/mythic_performance_report_*.html
-!reports/mythic_performance_report_latest.html
+/reports/*
+!/reports/favicon.ico
 chromedriver-win64/chromedriver.exe
 chromedriver-win64/LICENSE.chromedriver
 chromedriver-win64/THIRD_PARTY_NOTICES.chromedriver
