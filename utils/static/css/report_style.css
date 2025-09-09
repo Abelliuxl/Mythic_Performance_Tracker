@@ -690,7 +690,7 @@ body.dark .character-stats-controls select {
 .class-武僧::before { content: "🥋"; }
 .class-圣骑士::before { content: "🛡️"; }
 .class-牧师::before { content: "😇"; }
-.class-盗贼::before { content: "🔪" !important; }
+.class-盗贼::before { content: "🔪"; } /* 移除 !important */
 .class-萨满祭司::before { content: "⚡"; }
 .class-术士::before { content: "😈"; }
 .class-战士::before { content: "⚔️"; }

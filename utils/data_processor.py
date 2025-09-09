@@ -114,3 +114,11 @@ class DataProcessor:
     def get_character_class_map(char_df):
         """获取角色职业映射"""
         return dict(zip(char_df["角色名"], char_df["职业"]))
+
+    @staticmethod
+    def standardize_class_names(char_df):
+        """将'潜行者'统一替换为'盗贼'"""
+        if "职业" in char_df.columns:
+            char_df["职业"] = char_df["职业"].replace("潜行者", "盗贼")
+            logger.info("已将职业名称中的'潜行者'统一替换为'盗贼'")
+        return char_df

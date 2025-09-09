@@ -29,17 +29,26 @@
             <thead>
                 <tr>
                     {% for header in headers %}
-                    <th>{{ header }}</th>
+                    <th onclick="sortTable(this)">{{ header }}</th>
                     {% endfor %}
                     <th>操作</th> {# Add a new column for actions #}
                 </tr>
             </thead>
             <tbody>
                 {% for row_idx, row in data %}
-                <tr>
+                <tr style="background-color: {{ row['玩家'] | string_to_color_hsl_alpha(0.2) }};">
                     {% for header in headers %}
                     <td>
-                        <input type="text" name="{{ header }}_{{ row_idx }}" value="{{ row[header] if header in row else '' }}">
+                        {% if header == '职业' %}
+                        <select name="{{ header }}_{{ row_idx }}" onchange="setUnsavedChanges(true)">
+                            {% for profession in professions %}
+                            <option value="{{ profession }}" {% if profession == (row[header] if header in row else '') %}selected{% endif %}>{{ profession }}</option>
+                            {% endfor %}
+                            <option value="" {% if '' == (row[header] if header in row else '') %}selected{% endif %}>- 选择职业 -</option> {# Option for empty value #}
+                        </select>
+                        {% else %}
+                        <input type="text" name="{{ header }}_{{ row_idx }}" value="{{ row[header] if header in row else '' }}" oninput="setUnsavedChanges(true)">
+                        {% endif %}
                     </td>
                     {% endfor %}
                     <td>
@@ -89,12 +98,34 @@
 
             headers.forEach(header => {
                 const cell = newRow.insertCell();
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.name = `${header}_${newRowIndex}`; // Assign a unique name for the new row
-                input.value = '';
-                input.oninput = () => setUnsavedChanges(true); // Mark as unsaved on input
-                cell.appendChild(input);
+                if (header === '职业') {
+                    const select = document.createElement('select');
+                    select.name = `${header}_${newRowIndex}`;
+                    select.onchange = () => setUnsavedChanges(true);
+                    // Add existing professions as options
+                    const professions = Array.from(document.querySelectorAll('select[name^="职业_"] option')).map(option => option.value);
+                    // Remove duplicates and empty string
+                    const uniqueProfessions = [...new Set(professions)].filter(p => p !== '');
+                    uniqueProfessions.forEach(profession => {
+                        const option = document.createElement('option');
+                        option.value = profession;
+                        option.textContent = profession;
+                        select.appendChild(option);
+                    });
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = "";
+                    defaultOption.textContent = "- 选择职业 -";
+                    select.appendChild(defaultOption);
+                    select.value = ""; // Set default to empty
+                    cell.appendChild(select);
+                } else {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = `${header}_${newRowIndex}`; // Assign a unique name for the new row
+                    input.value = '';
+                    input.oninput = () => setUnsavedChanges(true); // Mark as unsaved on input
+                    cell.appendChild(input);
+                }
             });
 
             const actionCell = newRow.insertCell();
@@ -109,6 +140,12 @@
         }
 
         async function saveChanges() {
+            const password = prompt("请输入管理员密码以保存更改：");
+            if (password !== ADMIN_PASSWORD) {
+                alert("密码错误，保存操作已取消。");
+                return;
+            }
+
             const tableBody = document.querySelector('table tbody');
             const rows = Array.from(tableBody.rows);
             const data = [];
@@ -117,18 +154,15 @@
             rows.forEach((row, rowIndex) => {
                 const rowData = {};
                 headers.forEach((header, colIndex) => {
-                    const input = row.querySelector(`input[name="${header}_${rowIndex}"]`);
-                    if (input) {
-                        rowData[header] = input.value;
+                    let value;
+                    if (header === '职业') {
+                        const select = row.cells[colIndex].querySelector('select');
+                        value = select ? select.value : '';
                     } else {
-                        // For newly added rows, the name might not match the original row_idx
-                        // We need to find the input based on its position or a more robust naming
-                        // For now, let's assume inputs are in order
-                        const cellInput = row.cells[colIndex].querySelector('input');
-                        if (cellInput) {
-                            rowData[header] = cellInput.value;
-                        }
+                        const input = row.cells[colIndex].querySelector('input');
+                        value = input ? input.value : '';
                     }
+                    rowData[header] = value;
                 });
                 data.push(rowData);
             });
@@ -137,7 +171,8 @@
                 const response = await fetch('/save_all', { // New endpoint for saving all data
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Password': password // 将密码作为X-Password头发送
                     },
                     body: JSON.stringify(data)
                 });
@@ -147,7 +182,8 @@
                     setUnsavedChanges(false); // No unsaved changes after successful save
                     location.reload(); // Reload to reflect saved changes and update row indices
                 } else {
-                    alert('保存失败，请重试。');
+                    const errorText = await response.text();
+                    alert(`保存失败：${errorText || response.statusText}`);
                 }
             } catch (error) {
                 console.error('保存时发生错误:', error);
@@ -161,6 +197,71 @@
                 input.oninput = () => setUnsavedChanges(true);
             });
         });
+
+        // Function to generate a consistent HSL color from a string
+        function stringToHslColor(str, s, l) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const h = hash % 360;
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        // Custom Jinja2 filter to use the JS function for color generation
+        // This part needs to be handled by Flask's Jinja2 environment, not directly in JS.
+        // I will add a custom filter in excel_editor_app.py for this.
+
+        let currentSortColumn = -1;
+        let sortDirection = 'asc'; // 'asc' for ascending, 'desc' for descending
+
+        function sortTable(headerElement) {
+            const columnIndex = Array.from(headerElement.parentNode.children).indexOf(headerElement);
+            const table = headerElement.closest('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.rows);
+
+            // Determine sort direction
+            if (columnIndex === currentSortColumn) {
+                sortDirection = (sortDirection === 'asc') ? 'desc' : 'asc';
+            } else {
+                sortDirection = 'asc';
+                currentSortColumn = columnIndex;
+            }
+
+            // Sort rows
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[columnIndex].querySelector('input').value;
+                const cellB = rowB.cells[columnIndex].querySelector('input').value;
+
+                let comparison = 0;
+                // Try to convert to number for numeric comparison
+                const numA = parseFloat(cellA);
+                const numB = parseFloat(cellB);
+
+                if (!isNaN(numA) && !isNaN(numB)) {
+                    comparison = numA - numB;
+                } else {
+                    comparison = cellA.localeCompare(cellB);
+                }
+
+                return sortDirection === 'asc' ? comparison : -comparison;
+            });
+
+            // Re-append sorted rows to the tbody
+            rows.forEach(row => tbody.appendChild(row));
+
+            // Update input names to reflect new row indices for saving
+            rows.forEach((row, newRowIndex) => {
+                Array.from(row.cells).forEach((cell, colIndex) => {
+                    const input = cell.querySelector('input');
+                    if (input) {
+                        const header = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent).filter(h => h !== '操作')[colIndex];
+                        input.name = `${header}_${newRowIndex}`;
+                    }
+                });
+            });
+        }
     </script>
 </body>
 </html>

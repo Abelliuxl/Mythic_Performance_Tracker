@@ -18,6 +18,10 @@ class HTMLVisualizer:
             char_df = self._safe_read_excel(character_info_path)
             result_df = self._safe_read_excel(result_path, preferred_sheet="明细")
 
+            # 统一职业名称
+            from utils.data_processor import DataProcessor
+            char_df = DataProcessor.standardize_class_names(char_df)
+
             # 再次整体清洗，确保无数组/列表残留
             char_df = self._sanitize_dataframe(char_df)
             result_df = self._sanitize_dataframe(result_df)
@@ -70,6 +74,10 @@ class HTMLVisualizer:
             # 读取数据（带兜底）
             char_df = self._safe_read_excel(character_info_path)
             result_df = self._safe_read_excel(result_path, preferred_sheet="明细")
+
+            # 统一职业名称
+            from utils.data_processor import DataProcessor
+            char_df = DataProcessor.standardize_class_names(char_df)
 
             # 再次整体清洗，确保无数组/列表残留
             char_df = self._sanitize_dataframe(char_df)
