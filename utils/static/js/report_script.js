@@ -411,6 +411,20 @@ new Chart(classCtx, {
             console.log("Filtered data (hide empty):", filteredData);
         }
 
+        // 新增：玩家过滤
+        const selectedPlayer = playerFilterSelect.value;
+        if (selectedPlayer !== 'all') {
+            filteredData = filteredData.filter(char => char.player === selectedPlayer);
+            console.log("Filtered data (by player):", filteredData);
+        }
+
+        // 新增：职业过滤
+        const selectedClass = classFilterSelect.value;
+        if (selectedClass !== 'all') {
+            filteredData = filteredData.filter(char => char.class === selectedClass);
+            console.log("Filtered data (by class):", filteredData);
+        }
+
         // 排序
         const sortBy = characterSortBySelect.value;
         updateDisplayMetric(sortBy); // 根据排序选项更新显示指标
@@ -435,11 +449,41 @@ new Chart(classCtx, {
         renderCharacterStats(filteredData);
     }
 
+    // 获取新的过滤下拉框元素
+    const playerFilterSelect = document.getElementById('playerFilter');
+    const classFilterSelect = document.getElementById('classFilter');
+
+    // 填充玩家过滤下拉框
+    function populatePlayerFilter() {
+        const uniquePlayers = [...new Set(characterStatsData.map(char => char.player))].sort();
+        uniquePlayers.forEach(player => {
+            const option = document.createElement('option');
+            option.value = player;
+            option.textContent = player;
+            playerFilterSelect.appendChild(option);
+        });
+    }
+
+    // 填充职业过滤下拉框
+    function populateClassFilter() {
+        const uniqueClasses = [...new Set(characterStatsData.map(char => char.class))].sort();
+        uniqueClasses.forEach(charClass => {
+            const option = document.createElement('option');
+            option.value = charClass;
+            option.textContent = charClass;
+            classFilterSelect.appendChild(option);
+        });
+    }
+
     // 添加事件监听器
     hideEmptyCharsCheckbox.addEventListener('change', applyFiltersAndSort);
     characterSortBySelect.addEventListener('change', applyFiltersAndSort);
+    playerFilterSelect.addEventListener('change', applyFiltersAndSort); // 新增事件监听
+    classFilterSelect.addEventListener('change', applyFiltersAndSort); // 新增事件监听
 
     // 初始渲染
+    populatePlayerFilter(); // 填充玩家过滤
+    populateClassFilter(); // 填充职业过滤
     applyFiltersAndSort();
 })();
 
@@ -565,7 +609,7 @@ new Chart(classCtx, {
     };
 
     if (isMobile()) {
-        // 在手机端，合并所有数据集为一个单一数据集
+        // 在手机端，将多个数据集合并为单一数据集
         const combinedData = playerLabels.map((player, playerIndex) => {
             let totalLevel = 0;
             datasets.forEach(dataset => {
@@ -598,8 +642,8 @@ new Chart(classCtx, {
 
     // 动态计算图表高度
     const numberOfPlayers = finalPlayerLabels.length;
-    const barHeight = 25; // 每个柱状条的高度
-    const paddingHeight = 100; // 顶部和底部以及轴标签的额外空间
+    const barHeight = 30; // 每个柱状条的高度
+    const paddingHeight = 120; // 顶部和底部以及轴标签的额外空间
     playerCtx.canvas.height = numberOfPlayers * barHeight + paddingHeight;
 
     const playerChartInstance = new Chart(playerCtx, {
@@ -632,40 +676,42 @@ function showPlayerDetailModal(playerName) {
         return;
     }
 
-    // 聚合所有角色的副本数据
-    const aggregatedDungeonStats = {}; // {dungeonName: {total_level_sum: X, total_runs: Y}}
+    // NEW LOGIC: Find the highest level for each dungeon across all of player's characters
+    const maxDungeonLevels = {}; // {dungeonName: max_level_for_this_dungeon}
 
     playerCharactersData.forEach(char => {
         for (const dungeonName in char.dungeon_stats) {
             const stats = char.dungeon_stats[dungeonName];
-            if (!aggregatedDungeonStats[dungeonName]) {
-                aggregatedDungeonStats[dungeonName] = { level_sum: 0, runs: 0 };
+            // Use stats.avg_level as the level for this character in this dungeon
+            // Note: stats.avg_level here is the average for that character in that specific dungeon.
+            // The user's request implies taking the highest of these character-specific averages.
+            const currentLevel = stats.avg_level; // This is already an average for the character in that dungeon
+
+            if (!maxDungeonLevels[dungeonName] || currentLevel > maxDungeonLevels[dungeonName]) {
+                maxDungeonLevels[dungeonName] = currentLevel;
             }
-            aggregatedDungeonStats[dungeonName].level_sum += (stats.avg_level * stats.total_runs);
-            aggregatedDungeonStats[dungeonName].runs += stats.total_runs;
         }
     });
 
-    // 准备 Chart.js 数据
+    // Prepare Chart.js data
     const dungeonLabels = [];
-    const avgLevels = [];
+    const avgLevels = []; // This will now store max levels
     const backgroundColors = [];
     const borderColors = [];
 
-    // 按照 DUNGEON_NAME_MAP 的顺序来显示副本，确保一致性
-    const allDungeons = Object.values(chartsData.DUNGEON_FULL_NAME_MAP); // 获取所有副本全称
+    // Use all_dungeons from chartsData to ensure all 8 dungeons are considered
+    const allDungeons = Object.values(chartsData.DUNGEON_FULL_NAME_MAP);
 
     allDungeons.forEach(dungeonFullName => {
-        if (aggregatedDungeonStats[dungeonFullName] && aggregatedDungeonStats[dungeonFullName].runs > 0) {
-            const avgLevel = aggregatedDungeonStats[dungeonFullName].level_sum / aggregatedDungeonStats[dungeonFullName].runs;
-            const dungeonShortName = chartsData.DUNGEON_SHORT_NAME_MAP[dungeonFullName] || dungeonFullName; // 获取简称
-            dungeonLabels.push(dungeonShortName); // 使用简称
-            avgLevels.push(avgLevel.toFixed(1)); // 保留一位小数
+        const maxLevel = maxDungeonLevels[dungeonFullName] || 0; // Default to 0 if no record for this dungeon
+        const dungeonShortName = chartsData.DUNGEON_SHORT_NAME_MAP[dungeonFullName] || dungeonFullName; // Get short name
 
-            const color = chartsData.DUNGEON_COLOR_MAP[dungeonFullName] || 'rgba(120, 120, 120, 0.8)';
-            backgroundColors.push(color);
-            borderColors.push(color.replace('0.8)', '1)'));
-        }
+        dungeonLabels.push(dungeonShortName);
+        avgLevels.push(maxLevel.toFixed(1)); // Store max level
+
+        const color = chartsData.DUNGEON_COLOR_MAP[dungeonFullName] || 'rgba(120, 120, 120, 0.8)';
+        backgroundColors.push(color);
+        borderColors.push(color.replace('0.8)', '1)'));
     });
 
     // 如果没有数据，显示提示
@@ -946,7 +992,7 @@ function showPlayerDetailModal(playerName) {
     // Close modal when clicking outside
     window.addEventListener('click', (event) => {
         if (event.target === afkPlayerModal) {
-            afkPlayerModal.style.display = 'none';
+            modal.style.display = 'none';
             // Do NOT reset progress on close, keep it for next open
             // Do NOT stop emoji rain here
         }

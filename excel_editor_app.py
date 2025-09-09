@@ -26,6 +26,8 @@ app.jinja_env.filters['string_to_color_hsl_alpha'] = string_to_hsl_color
 def index():
     try:
         df = pd.read_excel(EXCEL_FILE)
+        # Fill NaN values with empty strings to ensure all cells are displayed
+        df = df.fillna('')
         # Convert DataFrame to a list of dictionaries for easier rendering in Jinja2
         data = df.to_dict(orient='records')
         headers = df.columns.tolist()
@@ -52,6 +54,16 @@ def save_all():
         data = request.get_json()
         if not data:
             return "No data received", 400
+
+        # Validate data: check for empty values
+        for row_index, row in enumerate(data):
+            for key, value in row.items():
+                # Allow '职业' to be empty if '角色名' is also empty (for new, completely blank rows)
+                # Otherwise, all other fields must have a value
+                if key == '职业' and not value and not row.get('角色名'):
+                    continue # Allow '职业' to be empty if '角色名' is also empty
+                if not value and value != 0: # Check for empty string, None, or NaN (0 is a valid value)
+                    return f"Validation Error: Row {row_index + 1}, Column '{key}' cannot be empty.", 400
         
         df = pd.DataFrame(data)
         df.to_excel(EXCEL_FILE, index=False)

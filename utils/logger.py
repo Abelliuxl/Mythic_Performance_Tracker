@@ -42,7 +42,7 @@ class Logger:
     def save_to_file(self):
         """将日志保存到文件 / Save log to file"""
         try:
-            with open(self.log_file, "w", encoding="utf-8") as f:
+            with open(self.log_file, "a", encoding="utf-8") as f: # Changed "w" to "a"
                 for entry in self.log_entries:
                     f.write(entry + "\n")
             self.success(f"日志已保存到/Log saved to {self.log_file}")

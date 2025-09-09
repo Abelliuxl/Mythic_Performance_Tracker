@@ -50,7 +50,7 @@ DUNGEON_COLOR_MAP = {
 # 职业颜色映射
 CLASS_COLOR_MAP = {
     "死亡骑士": "C41F3B", "恶魔猎手": "A330C9", "德鲁伊": "FF7D0A", "猎人": "ABD473",
-    "法师": "69CCF0", "武僧": "00FF96", "圣骑士": "F58CBA", "骑士": "F58CBA",
+    "法师": "69CCF0", "武僧": "00FF96", "圣骑士": "F58CBA",
     "牧师": "FFFFFF", "盗贼": "FFF569", "萨满": "0070DE",
     "术士": "9482C9", "战士": "C79C6E"
 }
@@ -96,7 +96,7 @@ CRAWLER_CONFIG = {
 FILE_PATHS = {
     "character_info": "data/character_info.xlsx",
     "result": "data/result.xlsx",
-    "log_file": "logs/crawl_log.txt"
+    "log_file": "logs/clicker_process_record.txt"
 }
 
 # WCL URL配置

@@ -330,83 +330,97 @@ class HTMLVisualizer:
         """准备玩家统计数据，用于堆叠柱状图"""
         from config.settings import DUNGEON_COLOR_MAP, DUNGEON_NAME_MAP
 
-        # 1. 计算每个玩家的总运行次数和总平均等级
-        player_overall_stats = {}
+        all_dungeon_names = list(DUNGEON_NAME_MAP.values()) # All 8 dungeons
+
+        # Step 1: Prepare character-dungeon level mapping, filling missing dungeons with 0
+        # { (character_name, dungeon_name): level }
+        char_dungeon_levels = {}
         for _, row in result_df.iterrows():
-            player_name = row["玩家"]
+            char_name = row["角色名"]
+            dungeon_name = row["副本"]
             level = pd.to_numeric(row["限时层数"], errors="coerce")
             if pd.isna(level):
-                continue
+                level = 0 # Treat NaN levels as 0 for calculation purposes
+            char_dungeon_levels[(char_name, dungeon_name)] = level
 
-            if player_name not in player_overall_stats:
-                player_overall_stats[player_name] = {"total_runs": 0, "total_level_sum": 0}
-            
-            player_overall_stats[player_name]["total_runs"] += 1
-            player_overall_stats[player_name]["total_level_sum"] += level
+        # Identify characters that have at least one record with a non-zero level in result_df
+        active_characters = set(
+            result_df[pd.to_numeric(result_df["限时层数"], errors='coerce').fillna(0) > 0]["角色名"].unique()
+        )
         
-        # 过滤掉没有有效记录的玩家
-        player_overall_stats = {
-            p: data for p, data in player_overall_stats.items() if data["total_runs"] > 0
-        }
+        # Filter char_df to only include active characters
+        active_char_df = char_df[char_df["角色名"].isin(active_characters)]
+        
+        # Group active characters by player
+        player_char_map = active_char_df.groupby("玩家")["角色名"].apply(list).to_dict()
 
-        # 计算平均等级并排序玩家
+        # Step 2: Determine player_dungeon_max_levels
+        # {player_name: {dungeon_name: max_level_for_this_dungeon_across_all_player_chars}}
+        player_dungeon_max_levels = {}
+        player_dungeon_actual_runs = {} # To store actual runs for tooltip
+
+        for player_name, characters in player_char_map.items():
+            player_dungeon_max_levels[player_name] = {}
+            player_dungeon_actual_runs[player_name] = {}
+
+            for dungeon_name in all_dungeon_names:
+                max_level_for_dungeon = 0
+                total_runs_for_dungeon = 0 # Actual runs for this dungeon across all player's chars
+
+                for char_name in characters:
+                    level = char_dungeon_levels.get((char_name, dungeon_name), 0)
+                    max_level_for_dungeon = max(max_level_for_dungeon, level)
+                    
+                    # Count actual runs for tooltip
+                    if (char_name, dungeon_name) in char_dungeon_levels and char_dungeon_levels[(char_name, dungeon_name)] > 0:
+                        total_runs_for_dungeon += 1
+                
+                player_dungeon_max_levels[player_name][dungeon_name] = max_level_for_dungeon
+                player_dungeon_actual_runs[player_name][dungeon_name] = total_runs_for_dungeon
+
+        # Step 3: Calculate player_overall_stats based on player_dungeon_max_levels
+        player_overall_stats = {}
+        for player_name, dungeon_levels in player_dungeon_max_levels.items():
+            total_level_sum_for_player = sum(dungeon_levels.values()) # Sum of 8 highest levels
+            player_overall_stats[player_name] = {
+                "total_level_sum": total_level_sum_for_player,
+                "total_potential_runs": len(all_dungeon_names) # Always 8 dungeons for the average
+            }
+        
+        # Calculate average level and sort players
         sorted_players = sorted(
             player_overall_stats.keys(),
-            key=lambda p: player_overall_stats[p]["total_level_sum"] / player_overall_stats[p]["total_runs"],
+            key=lambda p: player_overall_stats[p]["total_level_sum"] / player_overall_stats[p]["total_potential_runs"],
             reverse=True
         )
         
-        # 2. 计算每个玩家在每个副本的统计数据
-        player_dungeon_detail = {} # {player: {dungeon: {"avg_level": X, "runs": Y}}}
-        for _, row in result_df.iterrows():
-            player_name = row["玩家"]
-            dungeon_name = row["副本"]
-            level = pd.to_numeric(row["限时层数"], errors="coerce")
-            if pd.isna(level) or player_name not in player_overall_stats: # 只考虑有有效记录的玩家
-                continue
-
-            if player_name not in player_dungeon_detail:
-                player_dungeon_detail[player_name] = {}
-            if dungeon_name not in player_dungeon_detail[player_name]:
-                player_dungeon_detail[player_name][dungeon_name] = {"level_sum": 0, "runs": 0}
-            
-            player_dungeon_detail[player_name][dungeon_name]["level_sum"] += level
-            player_dungeon_detail[player_name][dungeon_name]["runs"] += 1
-
-        # 3. 构建 Chart.js 所需的 datasets
+        # Step 4: Build Chart.js datasets
         datasets = []
-        all_dungeons = list(DUNGEON_NAME_MAP.values()) # 使用配置中的副本顺序
-
-        for dungeon_name in all_dungeons:
+        for dungeon_name in all_dungeon_names:
             dataset_data = []
-            dungeon_meta_avg_levels = [] # 用于tooltip
-            dungeon_meta_runs = [] # 用于tooltip
+            dungeon_meta_avg_levels = [] # For tooltip (highest level for this dungeon)
+            dungeon_meta_runs = [] # For tooltip (actual runs for this dungeon)
 
             for player_name in sorted_players:
-                player_total_runs = player_overall_stats[player_name]["total_runs"]
+                max_level_for_dungeon = player_dungeon_max_levels[player_name][dungeon_name]
+                actual_runs_for_dungeon = player_dungeon_actual_runs[player_name][dungeon_name]
                 
-                dungeon_stats = player_dungeon_detail.get(player_name, {}).get(dungeon_name, {"level_sum": 0, "runs": 0})
-                dungeon_level_sum = dungeon_stats["level_sum"]
-                dungeon_runs = dungeon_stats["runs"]
-
-                # 计算该副本对玩家总平均等级的贡献值
-                # contribution = (该副本的平均等级 * 该副本的运行次数) / 该玩家的总运行次数
-                # 简化为：该副本的总层数和 / 该玩家的总运行次数
-                contribution = round(dungeon_level_sum / player_total_runs, 2) if player_total_runs > 0 else 0
+                # Contribution to the player's overall average (max_level / 8)
+                contribution = round(max_level_for_dungeon / len(all_dungeon_names), 2)
                 
                 dataset_data.append(contribution)
-                dungeon_meta_avg_levels.append(round(dungeon_level_sum / dungeon_runs, 1) if dungeon_runs > 0 else 0)
-                dungeon_meta_runs.append(dungeon_runs)
+                dungeon_meta_avg_levels.append(max_level_for_dungeon)
+                dungeon_meta_runs.append(actual_runs_for_dungeon)
             
             datasets.append({
                 "label": dungeon_name,
                 "backgroundColor": DUNGEON_COLOR_MAP.get(dungeon_name, "rgba(120, 120, 120, 0.8)"),
-                "borderColor": DUNGEON_COLOR_MAP.get(dungeon_name, "rgba(120, 120, 120, 1)").replace("0.8)", "1)"), # 使用不透明的颜色作为描边
-                "borderWidth": 1, # 描边宽度
+                "borderColor": DUNGEON_COLOR_MAP.get(dungeon_name, "rgba(120, 120, 120, 1)").replace("0.8)", "1)"),
+                "borderWidth": 1,
                 "data": dataset_data,
-                "meta": { # 存储元数据用于tooltip
-                    "avg_levels": dungeon_meta_avg_levels,
-                    "runs": dungeon_meta_runs
+                "meta": {
+                    "avg_levels": dungeon_meta_avg_levels, # Now stores max level for this dungeon
+                    "runs": dungeon_meta_runs # Now stores actual runs for this dungeon
                 }
             })
         

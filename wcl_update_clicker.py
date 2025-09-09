@@ -173,6 +173,8 @@ def main():
         # 安全退出浏览器
         if driver:
             browser_manager.safe_quit(driver)
+        # 保存日志到文件
+        logger.save_to_file()
 
 if __name__ == "__main__":
     try:
