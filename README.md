@@ -1,8 +1,16 @@
+<div align="center">
+
 # Mythic Performance Tracker
+
+</div>
+
+<div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.7%2B-blue.svg)](https://www.python.org/)
 [![Status](https://img.shields.io/badge/Status-Active-green.svg)](https://github.com/Abelliuxl/mythic-performance-tracker)
+
+</div>
 
 <div align="center">
 
@@ -18,19 +26,11 @@
 
 ## English
 
-<div align="center">
-
 ### 🎯 Overview
-
-</div>
 
 Mythic Performance Tracker is a comprehensive Windows-based tool designed to crawl, process, and visualize Mythic+ dungeon performance data from Warcraft Logs (WCL). It provides detailed insights into player performance across different dungeons, levels, and classes.
 
-<div align="center">
-
 ### ✨ Features
-
-</div>
 
 - **🕷️ Web Crawling**: Automated data collection from Warcraft Logs
 - **📊 Data Processing**: Comprehensive analysis of dungeon runs
@@ -39,11 +39,7 @@ Mythic Performance Tracker is a comprehensive Windows-based tool designed to cra
 - **📱 Responsive Design**: Works on desktop and mobile devices
 - **🔄 Real-time Updates**: Generates timestamped reports
 
-<div align="center">
-
 ### 🚀 Installation
-
-</div>
 
 #### Prerequisites
 
@@ -69,11 +65,7 @@ pip install -r requirements.txt
    - Adjust browser settings as needed
    - Set file paths
 
-<div align="center">
-
 ### 📝 Usage
-
-</div>
 
 1. Prepare your character data in `data/character_info.xlsx` with columns:
    - 玩家/Player
@@ -90,11 +82,7 @@ python mplus_batch_crawler.py
    - Excel report: `data/result.xlsx`
    - HTML visualization: `reports/mythic_performance_report_latest.html`
 
-<div align="center">
-
 ### 📁 Project Structure
-
-</div>
 
 ```
 Mythic_Performance_Tracker/
@@ -119,11 +107,7 @@ Mythic_Performance_Tracker/
 └── legacy/                      # Legacy code
 ```
 
-<div align="center">
-
 ### 🔧 Configuration
-
-</div>
 
 Key settings in `config/settings.py`:
 
@@ -133,11 +117,7 @@ Key settings in `config/settings.py`:
 - **BROWSER_CONFIG**: ChromeDriver and browser settings
 - **CRAWLER_CONFIG**: Crawler behavior settings
 
-<div align="center">
-
 ### 📊 Report Features
-
-</div>
 
 The generated HTML reports include:
 
@@ -149,11 +129,7 @@ The generated HTML reports include:
   - Class performance
   - Dungeon completion rates
 
-<div align="center">
-
 ### 🤝 Contributing
-
-</div>
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -161,11 +137,7 @@ The generated HTML reports include:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-<div align="center">
-
 ### 📄 License
-
-</div>
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
@@ -183,19 +155,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 中文
 
-<div align="center">
-
 ### 🎯 项目概述
-
-</div>
 
 Mythic Performance Tracker 是一个基于 Windows 的强大工具，专门用于从 Warcraft Logs (WCL) 爬取、处理和可视化神话副本（Mythic+）的性能数据。它提供了不同副本、层数和职业的玩家表现详细分析。
 
-<div align="center">
-
 ### ✨ 主要功能
-
-</div>
 
 - **🕷️ 网页爬取**: 从 Warcraft Logs 自动收集数据
 - **📊 数据处理**: 全面分析副本运行数据
@@ -204,11 +168,7 @@ Mythic Performance Tracker 是一个基于 Windows 的强大工具，专门用�
 - **📱 响应式设计**: 在桌面和移动设备上都能良好显示
 - **🔄 实时更新**: 生成带时间戳的报告
 
-<div align="center">
-
 ### 🚀 安装说明
-
-</div>
 
 #### 前置要求
 
@@ -234,11 +194,7 @@ pip install -r requirements.txt
    - 根据需要调整浏览器设置
    - 设置文件路径
 
-<div align="center">
-
 ### 📝 使用方法
-
-</div>
 
 1. 准备角色数据文件 `data/character_info.xlsx`，包含以下列：
    - 玩家/Player
@@ -255,11 +211,7 @@ python mplus_batch_crawler.py
    - Excel 报告：`data/result.xlsx`
    - HTML 可视化报告：`reports/mythic_performance_report_latest.html`
 
-<div align="center">
-
 ### 📁 项目结构
-
-</div>
 
 ```
 Mythic_Performance_Tracker/
@@ -284,11 +236,7 @@ Mythic_Performance_Tracker/
 └── legacy/                      # 旧版代码
 ```
 
-<div align="center">
-
 ### 🔧 配置说明
-
-</div>
 
 `config/settings.py` 中的主要设置：
 
@@ -298,11 +246,7 @@ Mythic_Performance_Tracker/
 - **BROWSER_CONFIG**: ChromeDriver 和浏览器设置
 - **CRAWLER_CONFIG**: 爬虫行为设置
 
-<div align="center">
-
 ### 📊 报告功能
-
-</div>
 
 生成的 HTML 报告包含：
 
@@ -314,11 +258,7 @@ Mythic_Performance_Tracker/
   - 职业表现
   - 副本完成率
 
-<div align="center">
-
 ### 🤝 贡献指南
-
-</div>
 
 1. Fork 仓库
 2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
@@ -326,19 +266,11 @@ Mythic_Performance_Tracker/
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 打开 Pull Request
 
-<div align="center">
-
 ### 📄 许可证
-
-</div>
 
 本项目采用 MIT 许可证 - 详情请查看 [LICENSE](LICENSE) 文件。
 
-<div align="center">
-
 ### 🙏 致谢
-
-</div>
 
 - Warcraft Logs API 提供性能数据
 - Chart.js 提供美观的数据可视化
