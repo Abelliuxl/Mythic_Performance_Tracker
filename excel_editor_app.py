@@ -11,12 +11,12 @@ PASSWORD = "131415" # 请将此处的your_password_here替换为实际密码
 def string_to_hsl_color(s, alpha=1.0):
     """Generates a consistent HSL color from a string."""
     hash_value = int(hashlib.sha1(s.encode('utf-8')).hexdigest(), 16)
-    h = hash_value % 360
-    # Use fixed saturation and lightness for pastel colors
-    # s = 70 # Saturation
-    # l = 80 # Lightness
-    # return f"hsla({h}, {s}%, {l}%, {alpha})"
-    return f"hsla({h}, 70%, 80%, {alpha + 0.1})" # 增加透明度，使其更浓
+    # 优化色相选择，使其更分散，同时保持饱和度和亮度固定
+    # 使用一个较大的素数作为乘数，以更好地分散哈希值在色相环上的分布
+    h = (hash_value * 2654435761) % 360 # 2654435761 是一个大的素数，用于分散哈希值
+    s = 70 # 饱和度保持固定
+    l = 80 # 亮度保持固定
+    return f"hsla({h}, {s}%, {l}%, {alpha + 0.1})" # 增加透明度，使其更浓
 
 app.jinja_env.filters['string_to_color_hsl_alpha'] = string_to_hsl_color
 
