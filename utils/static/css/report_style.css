@@ -380,6 +380,10 @@ body.dark .character-stats-controls select {
     border-color: #d0d0d0; /* hover时边框颜色加深 */
 }
 
+.character-stat-card {
+    cursor: pointer;
+}
+
 .character-card-header {
     padding: 15px 20px; /* 调整内边距 */
     border-left: 5px solid #888888; /* 灰色 */
@@ -404,6 +408,20 @@ body.dark .character-stats-controls select {
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 3px; /* 减小与服务器之间的间距 */
+}
+
+.character-name .rank {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: #f0f0f0;
+    color: #333;
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 0.8em;
 }
 
 .character-server {
@@ -489,6 +507,12 @@ body.dark .character-stats-controls select {
 .chart-card:has(#playerChart) .chart-container {
     min-height: auto; /* 允许玩家图表容器高度自适应 */
     height: auto; /* 确保没有固定高度 */
+}
+
+/* 针对角色排名图表，移除固定高度，让其在JS中动态计算 */
+.chart-card:has(#characterRankingChart) .chart-container {
+    min-height: auto;
+    height: auto;
 }
 
 /* 针对玩家统计图表，移除固定高度，让其在JS中动态计算 */

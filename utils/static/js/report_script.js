@@ -372,8 +372,9 @@ new Chart(classCtx, {
                 displayValue = typeof stat.avg_level === 'number' ? stat.avg_level.toFixed(2) : 'N/A';
             }
 
+            const characterKey = `${stat.character}-${stat.server}`;
             const cardHtml = `
-                <div class="character-stat-card">
+                <div class="character-stat-card" data-character-key="${characterKey}">
                     <div class="character-card-header" style="border-left-color: #${classColor};">
                         <div class="character-info">
                             <div class="character-name">${stat.character}</div>
@@ -485,7 +486,117 @@ new Chart(classCtx, {
     populatePlayerFilter(); // 填充玩家过滤
     populateClassFilter(); // 填充职业过滤
     applyFiltersAndSort();
+
+    // 事件委托：为角色卡片添加点击事件
+    characterStatsContainer.addEventListener('click', function(event) {
+        const card = event.target.closest('.character-stat-card');
+        if (card && card.dataset.characterKey) {
+            const characterKey = card.dataset.characterKey;
+            showCharacterDetailModal(characterKey);
+        }
+    });
 })();
+
+// 角色详情弹窗逻辑
+let characterDetailChartInstance = null;
+
+function showCharacterDetailModal(characterKey) {
+    const modal = document.getElementById('characterDetailModal');
+    const modalTitle = document.getElementById('characterModalTitle');
+    const detailCanvas = document.getElementById('characterDetailChart');
+    const closeButton = modal.querySelector('.close-button');
+
+    const characterData = chartsData.character_dungeon_details[characterKey];
+    const characterName = characterKey.split('-')[0];
+
+    if (!characterData) {
+        modalTitle.textContent = `${characterName} 的副本数据`;
+        detailCanvas.parentNode.innerHTML = '<p style="text-align: center; color: #7f8c8d;">没有找到该角色的详细副本数据。</p>';
+        modal.style.display = 'flex';
+        return;
+    }
+
+    modalTitle.textContent = `${characterName} 的副本统计`;
+    modal.style.display = 'flex';
+
+    const allDungeons = Object.values(chartsData.DUNGEON_FULL_NAME_MAP);
+    const dungeonLabels = [];
+    const avgLevels = [];
+    const backgroundColors = [];
+    const borderColors = [];
+
+    allDungeons.forEach(dungeonFullName => {
+        const dungeonShortName = chartsData.DUNGEON_SHORT_NAME_MAP[dungeonFullName] || dungeonFullName;
+        const stats = characterData[dungeonFullName];
+
+        dungeonLabels.push(dungeonShortName);
+        avgLevels.push(stats ? stats.avg_level : 0);
+
+        const color = chartsData.DUNGEON_COLOR_MAP[dungeonFullName] || 'rgba(120, 120, 120, 0.8)';
+        backgroundColors.push(color);
+        borderColors.push(color.replace('0.8)', '1)'));
+    });
+
+    if (characterDetailChartInstance) {
+        characterDetailChartInstance.destroy();
+    }
+
+    characterDetailChartInstance = new Chart(detailCanvas, {
+        type: 'bar',
+        data: {
+            labels: dungeonLabels,
+            datasets: [{
+                label: '平均层数',
+                data: avgLevels,
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y;
+                            }
+                            const dungeonFullName = allDungeons.find(d => chartsData.DUNGEON_SHORT_NAME_MAP[d] === context.label);
+                            const stats = characterData[dungeonFullName];
+                            if(stats){
+                                label += ` (限时 ${stats.timed_runs}/${stats.total_runs})`;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: '平均层数' }
+                },
+                x: {
+                    title: { display: true, text: '副本' }
+                }
+            }
+        }
+    });
+
+    closeButton.onclick = () => modal.style.display = 'none';
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+}
 
 // 玩家统计图表
 (function initPlayerChart() {
@@ -1220,4 +1331,113 @@ function showPlayerDetailModal(playerName) {
             }, 100); // 等待方向变化完成
         }
     });
+})();
+
+// 角色排名图表
+(function initCharacterRankingChart() {
+    const rankingCtx = document.getElementById('characterRankingChart').getContext('2d');
+    const rankingChartData = chartsData.character_ranking_chart_data;
+    const hideEmptyCharsCheckbox = document.getElementById('hideEmptyCharsRanking');
+    let chartInstance = null;
+
+    function renderChart() {
+        let labels = [...rankingChartData.labels];
+        let datasets = JSON.parse(JSON.stringify(rankingChartData.datasets));
+
+        if (hideEmptyCharsCheckbox.checked) {
+            const filteredIndices = labels.map((label, index) => {
+                const totalScore = datasets.reduce((sum, ds) => sum + ds.data[index], 0);
+                return totalScore > 0 ? index : -1;
+            }).filter(index => index !== -1);
+
+            labels = filteredIndices.map(index => labels[index]);
+            datasets.forEach(ds => {
+                ds.data = filteredIndices.map(index => ds.data[index]);
+            });
+        }
+
+        if (!labels || labels.length === 0) {
+            if(chartInstance) chartInstance.destroy();
+            rankingCtx.canvas.parentNode.innerHTML = '<p style="text-align: center; color: #7f8c8d;">暂无角色排名数据。</p>';
+            return;
+        }
+
+        const numberOfChars = labels.length;
+        const barHeight = 30; // 统一每个条目的高度
+        const paddingHeight = 120; // 顶部和底部的额外空间
+        rankingCtx.canvas.height = numberOfChars * barHeight + paddingHeight;
+
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        let finalDatasets = datasets;
+        let chartOptions = {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                },
+                tooltip: {
+                    enabled: false
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    title: {
+                        display: true,
+                        text: '副本最高层数'
+                    }
+                },
+                y: {
+                    stacked: true,
+                }
+            }
+        };
+
+        if (isMobile()) {
+            const combinedData = labels.map((label, index) => {
+                return datasets.reduce((sum, ds) => sum + ds.data[index], 0);
+            });
+
+            const backgroundColors = labels.map((label, index) => {
+                const originalIndex = rankingChartData.labels.indexOf(label);
+                const className = rankingChartData.classes[originalIndex];
+                return `#${chartsData.CLASS_COLOR_MAP[className] || '888888'}`;
+            });
+
+            finalDatasets = [{
+                label: '总层数',
+                data: combinedData,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors,
+                borderWidth: 1,
+            }];
+
+            chartOptions.plugins.legend.display = false;
+            chartOptions.scales.x.stacked = false;
+            chartOptions.scales.y.stacked = false;
+            chartOptions.scales.x.title.text = '总层数';
+        }
+
+        chartInstance = new Chart(rankingCtx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: finalDatasets
+            },
+            options: chartOptions
+        });
+    }
+
+    if (hideEmptyCharsCheckbox) {
+        hideEmptyCharsCheckbox.addEventListener('change', renderChart);
+    }
+
+    renderChart();
 })();

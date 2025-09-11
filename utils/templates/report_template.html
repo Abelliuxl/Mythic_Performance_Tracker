@@ -63,6 +63,25 @@
 
         <div class="section">
             <div class="section-header">
+                <h3>🏆 角色排名</h3>
+                <div class="character-ranking-controls">
+                    <label for="hideEmptyCharsRanking">
+                        <input type="checkbox" id="hideEmptyCharsRanking" checked> 隐藏无记录角色
+                    </label>
+                </div>
+            </div>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h4>👑 角色表现</h4>
+                    <div class="chart-container">
+                        <canvas id="characterRankingChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
                 <h3>🧙 角色统计</h3>
                 <div class="character-stats-controls">
                     <label for="hideEmptyChars">
@@ -142,6 +161,17 @@
             <h2 id="modalTitle"></h2>
             <div class="modal-body">
                 <canvas id="playerDetailChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Detail Modal -->
+    <div id="characterDetailModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="characterModalTitle"></h2>
+            <div class="modal-body">
+                <canvas id="characterDetailChart"></canvas>
             </div>
         </div>
     </div>

@@ -213,15 +213,19 @@ class HTMLVisualizer:
         """生成HTML内容"""
         # 准备数据
         summary_data = self._prepare_summary_data(result_df, char_df)
+        character_ranking_stats = self._prepare_character_ranking_stats(char_df, result_df)
         character_stats = self._prepare_character_stats(char_df, result_df)
         dungeon_stats = self._prepare_dungeon_stats(result_df)
         player_stats = self._prepare_player_stats(char_df, result_df) # 新增玩家统计数据
+        character_dungeon_details = self._prepare_character_dungeon_details(result_df) # 新增角色副本详细数据
         
         # 生成图表数据
         charts_json = self._prepare_charts_data(result_df, summary_data, char_df)
         
         # 将 character_stats, CLASS_COLOR_MAP 和 player_stats 也添加到 charts_json 中，方便前端JS访问
+        charts_json["character_ranking_chart_data"] = self._prepare_character_ranking_chart_data(char_df, result_df)
         charts_json["character_stats_data"] = character_stats
+        charts_json["character_dungeon_details"] = character_dungeon_details # 新增
         charts_json["CLASS_COLOR_MAP"] = CLASS_COLOR_MAP
         charts_json["LAYER_COLOR_MAP"] = LAYER_COLOR_MAP # 新增层数颜色映射
         charts_json["DUNGEON_COLOR_MAP"] = DUNGEON_COLOR_MAP # 新增副本颜色映射
@@ -238,6 +242,7 @@ class HTMLVisualizer:
         html_content = html_content.replace("{{GENERATION_TIME}}", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         html_content = html_content.replace("{{KPI_CARDS}}", kpi_html)
         html_content = html_content.replace("{{SUMMARY_TABLE}}", self._generate_summary_table(summary_data))
+        html_content = html_content.replace("{{CHARACTER_RANKING}}", self._generate_character_ranking(character_ranking_stats))
         html_content = html_content.replace("{{CHARACTER_STATS}}", self._generate_character_stats(character_stats))
         html_content = html_content.replace("{{DUNGEON_STATS}}", self._generate_dungeon_stats(dungeon_stats))
         html_content = html_content.replace("{{PLAYER_STATS}}", "") # 暂时留空，后续由JS渲染
@@ -325,6 +330,64 @@ class HTMLVisualizer:
                 })
         
         return stats
+
+    def _prepare_character_ranking_stats(self, char_df, result_df):
+        """准备角色排名数据"""
+        stats = self._prepare_character_stats(char_df, result_df)
+        # 按平均等级降序排序
+        return sorted(stats, key=lambda x: x['avg_level'], reverse=True)
+
+    def _prepare_character_ranking_chart_data(self, char_df, result_df):
+        """为角色排名图表准备数据"""
+        from config.settings import DUNGEON_COLOR_MAP, DUNGEON_NAME_MAP
+
+        all_dungeon_names = list(DUNGEON_NAME_MAP.values())
+
+        # 获取所有有记录的角色
+        active_characters = char_df[char_df['角色名'].isin(result_df['角色名'].unique())]
+
+        char_dungeon_levels = {}
+        for _, row in result_df.iterrows():
+            char_name = row["角色名"]
+            dungeon_name = row["副本"]
+            level = pd.to_numeric(row["限时层数"], errors="coerce")
+            if pd.notna(level):
+                # 对于每个角色和副本，我们只关心最高层数
+                current_max = char_dungeon_levels.get((char_name, dungeon_name), 0)
+                char_dungeon_levels[(char_name, dungeon_name)] = max(current_max, level)
+
+        char_scores = {}
+        for char_name in active_characters['角色名']:
+            score = sum(char_dungeon_levels.get((char_name, dn), 0) for dn in all_dungeon_names)
+            char_scores[char_name] = score
+
+        # 按分数排序
+        sorted_chars = sorted(char_scores.keys(), key=lambda c: char_scores[c], reverse=True)
+
+        datasets = []
+        for dungeon_name in all_dungeon_names:
+            dataset_data = []
+            for char_name in sorted_chars:
+                level = char_dungeon_levels.get((char_name, dungeon_name), 0)
+                dataset_data.append(level)
+            
+            datasets.append({
+                "label": dungeon_name,
+                "backgroundColor": DUNGEON_COLOR_MAP.get(dungeon_name, "rgba(120, 120, 120, 0.8)"),
+                "borderColor": DUNGEON_COLOR_MAP.get(dungeon_name, "rgba(120, 120, 120, 1)").replace("0.8)", "1)"),
+                "borderWidth": 1,
+                "data": dataset_data,
+            })
+
+        # 获取角色到职业的映射
+        char_to_class = dict(zip(char_df["角色名"], char_df["职业"]))
+        char_classes = [char_to_class.get(char, "未知职业") for char in sorted_chars]
+
+        return {
+            "labels": sorted_chars,
+            "datasets": datasets,
+            "classes": char_classes
+        }
     
     def _prepare_player_stats(self, char_df, result_df):
         """准备玩家统计数据，用于堆叠柱状图"""
@@ -597,6 +660,43 @@ class HTMLVisualizer:
         
         return player_char_dungeon_stats
 
+    def _prepare_character_dungeon_details(self, result_df):
+        """
+        准备每个角色在各个副本的详细数据，用于弹窗。
+        返回: { "character_key": { "dungeon_name": { "timed_runs": X, "total_runs": Y, "avg_level": Z, "completion_rate": P } } }
+        """
+        char_dungeon_details = {}
+        
+        # 确保 '限时层数' 是数字类型
+        result_df['限时层数'] = pd.to_numeric(result_df['限时层数'], errors='coerce')
+
+        # 按角色和副本分组
+        # 使用 '角色名' 和 '服务器' 来创建唯一键
+        grouped = result_df.groupby(['角色名', '服务器', '副本'])
+
+        for (char_name, server, dungeon_name), group in grouped:
+            key = f"{char_name}-{server}"
+            if key not in char_dungeon_details:
+                char_dungeon_details[key] = {}
+
+            valid_runs = group.dropna(subset=['限时层数'])
+            if valid_runs.empty:
+                continue
+
+            timed_runs = valid_runs[valid_runs['是否限时'] == '是'].shape[0]
+            total_runs = valid_runs.shape[0]
+            avg_level = valid_runs['限时层数'].mean()
+            completion_rate = round((timed_runs / total_runs * 100), 1) if total_runs > 0 else 0
+
+            char_dungeon_details[key][dungeon_name] = {
+                "timed_runs": timed_runs,
+                "total_runs": total_runs,
+                "avg_level": round(avg_level, 2),
+                "completion_rate": completion_rate
+            }
+            
+        return char_dungeon_details
+
     def _get_html_template(self):
         """获取HTML模板"""
         template_path = "utils/templates/report_template.html"
@@ -802,8 +902,9 @@ class HTMLVisualizer:
         
         for stat in character_stats:
             class_color = CLASS_COLOR_MAP.get(stat["class"], "FFFFFF")
+            character_key = f"{stat['character']}-{stat['server']}"
             html += f"""
-                <div class="stat-card">
+                <div class="stat-card character-stat-card" data-character-key="{character_key}">
                     <div class="card-header" style="border-left-color: #{class_color};">
                         <div class="character-info">
                             <div class="character-name">{stat["character"]}</div>
@@ -834,6 +935,22 @@ class HTMLVisualizer:
         """
         
         return html
+
+    def _generate_character_ranking(self, character_ranking_stats):
+        """生成角色排名HTML"""
+        return """
+        <div class="section-header">
+            <h3>🏆 角色排名</h3>
+        </div>
+        <div class="charts-container">
+            <div class="chart-card">
+                <h4>👑 角色表现</h4>
+                <div class="chart-container">
+                    <canvas id="characterRankingChart"></canvas>
+                </div>
+            </div>
+        </div>
+        """
     
     def _generate_dungeon_stats(self, dungeon_stats):
         """生成副本统计HTML"""
