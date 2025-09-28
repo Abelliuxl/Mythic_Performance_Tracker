@@ -17,6 +17,46 @@
         .delete-button:hover { background-color: #da190b; }
         .add-button { background-color: #008CBA; color: white; border: none; padding: 10px 20px; cursor: pointer; }
         .add-button:hover { background-color: #007bb5; }
+        
+        /* 自动完成下拉列表样式 */
+        .autocomplete-container {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .autocomplete-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-top: none;
+            background-color: white;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .autocomplete-item {
+            padding: 8px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .autocomplete-item:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+        
+        .autocomplete-item.selected {
+            background-color: #e3f2fd;
+        }
     </style>
 </head>
 <body>
@@ -47,7 +87,10 @@
                             <option value="" {% if '' == (row[header] if header in row else '') %}selected{% endif %}>- 选择职业 -</option> {# Option for empty value #}
                         </select>
                         {% else %}
-                        <input type="text" name="{{ header }}_{{ row_idx }}" value="{{ row[header] if header in row else '' }}" oninput="setUnsavedChanges(true)">
+                        <div class="autocomplete-container">
+                            <input type="text" name="{{ header }}_{{ row_idx }}" value="{{ row[header] if header in row else '' }}" oninput="setUnsavedChanges(true)" onfocus="showAutocomplete(this)" onkeydown="handleAutocompleteKeydown(event)" onblur="hideAutocomplete(this)">
+                            <div class="autocomplete-dropdown"></div>
+                        </div>
                         {% endif %}
                     </td>
                     {% endfor %}
@@ -119,12 +162,24 @@
                     select.value = ""; // Set default to empty
                     cell.appendChild(select);
                 } else {
+                    const container = document.createElement('div');
+                    container.className = 'autocomplete-container';
+                    
                     const input = document.createElement('input');
                     input.type = 'text';
                     input.name = `${header}_${newRowIndex}`; // Assign a unique name for the new row
                     input.value = '';
                     input.oninput = () => setUnsavedChanges(true); // Mark as unsaved on input
-                    cell.appendChild(input);
+                    input.onfocus = () => showAutocomplete(input);
+                    input.onkeydown = (event) => handleAutocompleteKeydown(event);
+                    input.onblur = () => hideAutocomplete(input);
+                    
+                    const dropdown = document.createElement('div');
+                    dropdown.className = 'autocomplete-dropdown';
+                    
+                    container.appendChild(input);
+                    container.appendChild(dropdown);
+                    cell.appendChild(container);
                 }
             });
 
@@ -262,6 +317,135 @@
                 });
             });
         }
+
+        // 自动完成功能
+        let currentAutocompleteInput = null;
+        let currentAutocompleteIndex = -1;
+
+        function showAutocomplete(input) {
+            currentAutocompleteInput = input;
+            currentAutocompleteIndex = -1;
+            
+            const container = input.closest('.autocomplete-container');
+            const dropdown = container.querySelector('.autocomplete-dropdown');
+            
+            // 获取当前列的所有唯一值
+            const columnValues = getColumnValues(input);
+            
+            if (columnValues.length === 0) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            
+            // 清空下拉列表
+            dropdown.innerHTML = '';
+            
+            // 添加选项
+            columnValues.forEach(value => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.textContent = value;
+                item.onclick = () => selectAutocompleteValue(value);
+                dropdown.appendChild(item);
+            });
+            
+            // 显示下拉列表
+            dropdown.style.display = 'block';
+        }
+
+        function hideAutocomplete(input) {
+            // 延迟隐藏，以便允许点击选项
+            setTimeout(() => {
+                const container = input.closest('.autocomplete-container');
+                const dropdown = container.querySelector('.autocomplete-dropdown');
+                dropdown.style.display = 'none';
+            }, 200);
+        }
+
+        function handleAutocompleteKeydown(event) {
+            const input = event.target;
+            const container = input.closest('.autocomplete-container');
+            const dropdown = container.querySelector('.autocomplete-dropdown');
+            const items = dropdown.querySelectorAll('.autocomplete-item');
+            
+            if (dropdown.style.display === 'none') {
+                return;
+            }
+            
+            switch(event.key) {
+                case 'ArrowDown':
+                    event.preventDefault();
+                    currentAutocompleteIndex = Math.min(currentAutocompleteIndex + 1, items.length - 1);
+                    updateAutocompleteSelection(items);
+                    break;
+                case 'ArrowUp':
+                    event.preventDefault();
+                    currentAutocompleteIndex = Math.max(currentAutocompleteIndex - 1, -1);
+                    updateAutocompleteSelection(items);
+                    break;
+                case 'Enter':
+                    event.preventDefault();
+                    if (currentAutocompleteIndex >= 0 && items[currentAutocompleteIndex]) {
+                        selectAutocompleteValue(items[currentAutocompleteIndex].textContent);
+                    }
+                    break;
+                case 'Escape':
+                    dropdown.style.display = 'none';
+                    currentAutocompleteIndex = -1;
+                    break;
+            }
+        }
+
+        function updateAutocompleteSelection(items) {
+            items.forEach((item, index) => {
+                if (index === currentAutocompleteIndex) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        function selectAutocompleteValue(value) {
+            if (currentAutocompleteInput) {
+                currentAutocompleteInput.value = value;
+                setUnsavedChanges(true);
+                
+                const container = currentAutocompleteInput.closest('.autocomplete-container');
+                const dropdown = container.querySelector('.autocomplete-dropdown');
+                dropdown.style.display = 'none';
+                
+                currentAutocompleteInput.focus();
+            }
+        }
+
+        function getColumnValues(input) {
+            const table = input.closest('table');
+            const inputName = input.name;
+            const columnIndex = parseInt(inputName.split('_')[1]);
+            
+            // 获取列名（去掉行索引）
+            const headerName = inputName.replace(`_${columnIndex}`, '');
+            
+            // 获取该列的所有输入框的值
+            const allInputs = table.querySelectorAll(`input[name^="${headerName}_"]`);
+            const values = Array.from(allInputs)
+                .map(inp => inp.value.trim())
+                .filter(value => value !== '');
+            
+            // 去重并排序
+            const uniqueValues = [...new Set(values)];
+            return uniqueValues.sort();
+        }
+
+        // 点击页面其他地方时隐藏自动完成下拉列表
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.autocomplete-container')) {
+                document.querySelectorAll('.autocomplete-dropdown').forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+            }
+        });
     </script>
 </body>
 </html>
