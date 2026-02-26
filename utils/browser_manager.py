@@ -25,17 +25,29 @@ class BrowserManager:
             
             # 应用配置
             if self.config.get("headless"):
-                options.add_argument("--headless")
+                options.add_argument("--headless=new")
             if self.config.get("disable_gpu"):
                 options.add_argument("--disable-gpu")
             if self.config.get("no_sandbox"):
                 options.add_argument("--no-sandbox")
+            if self.config.get("disable_dev_shm_usage"):
+                options.add_argument("--disable-dev-shm-usage")
+            if self.config.get("disable_setuid_sandbox"):
+                options.add_argument("--disable-setuid-sandbox")
             if self.config.get("log_level"):
                 options.add_argument(f"--log-level={self.config['log_level']}")
             if self.config.get("proxy_server"):
                 options.add_argument(f"--proxy-server={self.config['proxy_server']}")
             if self.config.get("page_load_strategy"):
                 options.page_load_strategy = self.config['page_load_strategy']
+            if self.config.get("window_size"):
+                options.add_argument(f"--window-size={self.config['window_size']}")
+            if self.config.get("user_agent"):
+                options.add_argument(f"user-agent={self.config['user_agent']}")
+            
+            # Linux headless 稳定选项
+            options.add_argument("--remote-debugging-port=9222")
+            options.add_argument("--disable-blink-features=AutomationControlled")
             
             # 获取平台配置并应用平台特定的选项
             platform_config = platform_utils.get_platform_config()

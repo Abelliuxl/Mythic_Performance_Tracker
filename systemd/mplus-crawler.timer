@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily M+ Crawler and Push at 6 AM
+
+[Timer]
+OnCalendar=*-*-* 22:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -71,8 +71,11 @@ BROWSER_CONFIG = {
     "no_sandbox": True,
     "log_level": "3",
     "proxy_server": "http://127.0.0.1:7890",
-    "page_load_strategy": "eager",  # 改为eager提高响应速度
-    "chromedriver_path": None,  # 现在由平台工具自动检测，无需手动配置
+    "page_load_strategy": "eager",
+    "chromedriver_path": None,
+    # Linux headless 必要选项
+    "disable_dev_shm_usage": True,
+    "disable_setuid_sandbox": True,
     # 额外的Chrome选项
     "window_size": "1920,1080",
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -80,8 +83,8 @@ BROWSER_CONFIG = {
     "ignore_certificate_errors": False,
     "disable_extensions": True,
     "disable_plugins": True,
-    "disable_images": False,  # 保持图片加载，确保页面元素正确渲染
-    "disable_javascript": False,  # 保持JavaScript启用
+    "disable_images": False,
+    "disable_javascript": False,
     "blink_settings": {"imagesEnabled": True}
 }
 

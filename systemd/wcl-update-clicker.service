@@ -1,0 +1,10 @@
+[Unit]
+Description=Mythic Performance Tracker - WCL Update Clicker
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/liuxl/Mythic_Performance_Tracker
+ExecStart=/home/liuxl/Mythic_Performance_Tracker/venv/bin/python /home/liuxl/Mythic_Performance_Tracker/wcl_update_clicker.py
+StandardOutput=append:/home/liuxl/Mythic_Performance_Tracker/logs/cron_wcl_update.log
+StandardError=append:/home/liuxl/Mythic_Performance_Tracker/logs/cron_wcl_update.log

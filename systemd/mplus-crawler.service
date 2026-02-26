@@ -1,0 +1,10 @@
+[Unit]
+Description=Mythic Performance Tracker - M+ Crawler and Push
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/liuxl/Mythic_Performance_Tracker
+ExecStart=/home/liuxl/Mythic_Performance_Tracker/venv/bin/python /home/liuxl/Mythic_Performance_Tracker/mplus_batch_crawler.py && /home/liuxl/bin/push_page.sh
+StandardOutput=append:/home/liuxl/Mythic_Performance_Tracker/logs/cron_mplus_crawler.log
+StandardError=append:/home/liuxl/Mythic_Performance_Tracker/logs/cron_mplus_crawler.log
