@@ -281,17 +281,11 @@ class DataProcessor:
                 except (ValueError, TypeError):
                     continue
 
-                t_split = time_str.split(":")
-                run_seconds = int(t_split[0]) * 60 + int(t_split[1])
-                limit = DUNGEON_TIME_LIMIT.get(dungeon)
-                on_time = limit is not None and run_seconds <= limit
-                result = "是" if on_time else "否"
-
                 records.append({
                     "副本": dungeon,
                     "限时层数": level_int,
                     "通关时间": time_str,
-                    "是否限时": result,
+                    "是否限时": "是",
                 })
 
             if records:
