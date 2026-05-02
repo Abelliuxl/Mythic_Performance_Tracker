@@ -57,6 +57,9 @@ chromedriver-win64/LICENSE.chromedriver
 chromedriver-win64/THIRD_PARTY_NOTICES.chromedriver
 chromedriver-linux64/
 
+# Chrome profile (user session data)
+chrome_profile/
+
 # Temporary files
 *.tmp
 *.temp
