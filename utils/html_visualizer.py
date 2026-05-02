@@ -339,9 +339,9 @@ class HTMLVisualizer:
 
     def _prepare_character_ranking_chart_data(self, char_df, result_df):
         """为角色排名图表准备数据"""
-        from config.settings import DUNGEON_COLOR_MAP, DUNGEON_NAME_MAP
+        from config.settings import DUNGEON_COLOR_MAP, DUNGEON_TIME_LIMIT
 
-        all_dungeon_names = list(DUNGEON_NAME_MAP.values())
+        all_dungeon_names = list(DUNGEON_TIME_LIMIT.keys())
 
         # 获取所有有记录的角色
         active_characters = char_df[char_df['角色名'].isin(result_df['角色名'].unique())]
@@ -391,9 +391,9 @@ class HTMLVisualizer:
     
     def _prepare_player_stats(self, char_df, result_df):
         """准备玩家统计数据，用于堆叠柱状图"""
-        from config.settings import DUNGEON_COLOR_MAP, DUNGEON_NAME_MAP
+        from config.settings import DUNGEON_COLOR_MAP, DUNGEON_TIME_LIMIT
 
-        all_dungeon_names = list(DUNGEON_NAME_MAP.values()) # All 8 dungeons
+        all_dungeon_names = list(DUNGEON_TIME_LIMIT.keys()) # All 8 dungeons
 
         # Step 1: Prepare character-dungeon level mapping, filling missing dungeons with 0
         # { (character_name, dungeon_name): level }
