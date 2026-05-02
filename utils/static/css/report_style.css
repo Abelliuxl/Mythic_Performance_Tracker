@@ -1294,3 +1294,34 @@ body.dark .character-stats-controls select {
         font-size: 0.9em;
     }
 }
+
+/* === 玩家总榜 === */
+.summary-table td:first-child {
+    font-weight: bold;
+    color: #666;
+    width: 40px;
+}
+.summary-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* === 角色贡献环图 === */
+.donut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+.donut-chart-card {
+    min-height: 320px;
+}
+.donut-chart-card h4 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1em;
+    color: #333;
+}
+.chart-container-donut {
+    position: relative;
+    height: 260px;
+    width: 100%;
+}

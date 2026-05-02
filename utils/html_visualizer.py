@@ -249,7 +249,29 @@ class HTMLVisualizer:
 
         # 将 charts_json 注入到 JavaScript 内容中
         html_content = html_content.replace("{{CHARTS_DATA}}", json.dumps(charts_json, ensure_ascii=False))
-        
+
+        # 注入新功能：玩家总榜 + 角色贡献环图 + 热力图增强
+        player_ranking_html = self._generate_player_ranking(char_df, result_df)
+        donut_html = self._generate_player_donut_charts(char_df, result_df)
+        insert = f"""
+    <div class="section">
+        <div class="section-header">
+            <h3>🏅 玩家总榜</h3>
+        </div>
+        {player_ranking_html}
+    </div>
+
+    <div class="section">
+        <div class="section-header">
+            <h3>🎯 角色贡献占比</h3>
+        </div>
+        <div class="donut-charts-container" id="donutChartsContainer">
+            {donut_html}
+        </div>
+    </div>
+"""
+        html_content = html_content.replace("</body>", f"{insert}</body>")
+
         return html_content
     
     def _prepare_summary_data(self, result_df, char_df):
@@ -696,6 +718,127 @@ class HTMLVisualizer:
             }
             
         return char_dungeon_details
+
+    def _generate_player_ranking(self, char_df, result_df):
+        from collections import OrderedDict
+        from config.settings import DUNGEON_TIME_LIMIT
+
+        all_dungeons = list(DUNGEON_TIME_LIMIT.keys())
+        player_chars = {}
+        for _, row in char_df.iterrows():
+            p = row["玩家"]
+            if p not in player_chars:
+                player_chars[p] = []
+            player_chars[p].append(row["角色名"])
+
+        rows = []
+        for player, chars in player_chars.items():
+            total = 0
+            char_scores = []
+            for cname in chars:
+                cdf = result_df[result_df["角色名"] == cname]
+                score = 0
+                for dn in all_dungeons:
+                    match = cdf[cdf["副本"] == dn]
+                    if not match.empty:
+                        lvl = pd.to_numeric(match["限时层数"].iloc[0], errors="coerce")
+                        if pd.notna(lvl):
+                            score += int(lvl)
+                char_scores.append(score)
+                total += score
+            top = max(char_scores) if char_scores else 0
+            avg = round(total / len(chars), 1) if chars else 0
+            rows.append((player, len(chars), total, top, avg, total))
+
+        rows.sort(key=lambda r: r[2], reverse=True)
+        rank = 1
+        html = '<div class="table-wrapper"><table class="summary-table"><thead><tr><th>#</th><th>玩家</th><th>角色数</th><th>总分</th><th>最高单角色</th><th>平均分</th></tr></thead><tbody>'
+        for player, nchars, total, top, avg, _ in rows:
+            color = "#C41F3B" if nchars > 1 else "#888"
+            html += f'<tr><td>{rank}</td><td style="font-weight:bold;color:{color}">{player}</td><td>{nchars}</td><td>{total}</td><td>{top}</td><td>{avg}</td></tr>'
+            rank += 1
+        html += "</tbody></table></div>"
+        return html
+
+    def _generate_player_donut_charts(self, char_df, result_df):
+        from config.settings import CLASS_COLOR_MAP, DUNGEON_TIME_LIMIT
+
+        all_dungeons = list(DUNGEON_TIME_LIMIT.keys())
+        player_chars = {}
+        for _, row in char_df.iterrows():
+            p = row["玩家"]
+            if p not in player_chars:
+                player_chars[p] = []
+            player_chars[p].append((row["角色名"], row["职业"]))
+
+        idx = 0
+        html = ""
+        for player, chars in player_chars.items():
+            if len(chars) < 2:
+                continue
+            labels, data, colors = [], [], []
+            total_score = 0
+            for cname, cclass in chars:
+                cdf = result_df[result_df["角色名"] == cname]
+                score = 0
+                for dn in all_dungeons:
+                    match = cdf[cdf["副本"] == dn]
+                    if not match.empty:
+                        lvl = pd.to_numeric(match["限时层数"].iloc[0], errors="coerce")
+                        if pd.notna(lvl):
+                            score += int(lvl)
+                labels.append(cname)
+                data.append(score)
+                hc = CLASS_COLOR_MAP.get(cclass, "888888")
+                colors.append(f"#{hc}")
+                total_score += score
+
+            if total_score == 0:
+                continue
+
+            canvas_id = f"donutChart{idx}"
+            html += f"""
+        <div class="chart-card donut-chart-card">
+            <h4>{player}</h4>
+            <div class="chart-container-donut">
+                <canvas id="{canvas_id}"></canvas>
+            </div>
+            <script>
+                new Chart(document.getElementById('{canvas_id}'), {{
+                    type: 'doughnut',
+                    data: {{
+                        labels: {json.dumps(labels)},
+                        datasets: [{{
+                            data: {json.dumps(data)},
+                            backgroundColor: {json.dumps(colors)},
+                            borderColor: '#000000',
+                            borderWidth: 1,
+                        }}]
+                    }},
+                    options: {{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {{
+                            legend: {{ position: 'bottom', labels: {{ font: {{ size: 12 }}, boxWidth: 12 }} }},
+                            tooltip: {{
+                                callbacks: {{
+                                    label: function(ctx) {{
+                                        let pct = ((ctx.raw / {total_score}) * 100).toFixed(1);
+                                        return ctx.label + ': ' + ctx.raw + '分 (' + pct + '%)';
+                                    }}
+                                }}
+                            }}
+                        }}
+                    }}
+                }});
+            </script>
+        </div>
+"""
+            idx += 1
+
+        if not html:
+            return "<p style='padding:20px;color:#888;'>没有多角色玩家，无数据显示</p>"
+        return f'<div class="charts-container donut-grid">{html}</div>'
 
     def _get_html_template(self):
         """获取HTML模板"""
