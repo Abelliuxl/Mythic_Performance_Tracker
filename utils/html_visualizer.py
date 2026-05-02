@@ -720,7 +720,7 @@ class HTMLVisualizer:
         return char_dungeon_details
 
     def _generate_player_ranking(self, char_df, result_df):
-        from config.settings import DUNGEON_TIME_LIMIT, DUNGEON_COLOR_MAP, DUNGEON_SHORT_NAME_MAP
+        from config.settings import DUNGEON_TIME_LIMIT
 
         all_dungeons = list(DUNGEON_TIME_LIMIT.keys())
         player_chars = {}
@@ -730,36 +730,43 @@ class HTMLVisualizer:
                 player_chars[p] = []
             player_chars[p].append(row["角色名"])
 
-        player_dungeon_levels = {}
+        items = []
         for player, chars in player_chars.items():
-            for dn in all_dungeons:
-                best = 0
-                for cname in chars:
-                    cdf = result_df[result_df["角色名"] == cname]
+            total = 0
+            char_scores = []
+            for cname in chars:
+                cdf = result_df[result_df["角色名"] == cname]
+                score = 0
+                for dn in all_dungeons:
                     match = cdf[cdf["副本"] == dn]
                     if not match.empty:
                         lvl = pd.to_numeric(match["限时层数"].iloc[0], errors="coerce")
                         if pd.notna(lvl):
-                            best = max(best, int(lvl))
-                player_dungeon_levels.setdefault(player, {})[dn] = best
-
-        sorted_players = sorted(player_dungeon_levels.keys(),
-                                key=lambda p: sum(player_dungeon_levels[p].values()), reverse=True)
+                            score += int(lvl)
+                char_scores.append(score)
+                total += score
+            items.append({
+                "player": player, "total": total, "chars": len(chars),
+                "top": max(char_scores) if char_scores else 0,
+                "avg": round(total / len(chars), 1) if chars else 0,
+            })
+        items.sort(key=lambda x: x["total"], reverse=True)
 
         import json
-        datasets = []
-        for dn in all_dungeons:
-            data = [player_dungeon_levels[p].get(dn, 0) for p in sorted_players]
-            color = DUNGEON_COLOR_MAP.get(dn, "rgba(128,128,128,0.8)")
-            datasets.append({
-                "label": DUNGEON_SHORT_NAME_MAP.get(dn, dn),
-                "data": data,
-                "backgroundColor": color,
-                "borderColor": "#000000",
-                "borderWidth": 1,
-            })
+        labels = [it["player"] for it in items]
+        totals = [it["total"] for it in items]
+        char_counts = [it["chars"] for it in items]
+        top_scores = [it["top"] for it in items]
+        avgs = [it["avg"] for it in items]
+        colors = []
+        for c in char_counts:
+            if c >= 3:
+                colors.append("#C41F3B")
+            elif c == 2:
+                colors.append("#F58CBA")
+            else:
+                colors.append("#69CCF0")
 
-        char_counts = [len(player_chars[p]) for p in sorted_players]
         return f"""
 <div class="chart-card">
     <div class="chart-container">
@@ -772,31 +779,44 @@ class HTMLVisualizer:
     new Chart(ctx, {{
         type: 'bar',
         data: {{
-            labels: {json.dumps(sorted_players)},
-            datasets: {json.dumps(datasets)}
+            labels: {json.dumps(labels)},
+            datasets: [{{
+                label: '总分',
+                data: {json.dumps(totals)},
+                backgroundColor: {json.dumps(colors)},
+                borderColor: '#000000',
+                borderWidth: 1,
+                borderRadius: 3,
+            }}]
         }},
         options: {{
             responsive: true,
             maintainAspectRatio: false,
-            scales: {{
-                x: {{ stacked: true, title: {{ display: true, text: '玩家' }} }},
-                y: {{ stacked: true, beginAtZero: true, title: {{ display: true, text: '总分' }} }}
-            }},
+            indexAxis: 'y',
             plugins: {{
-                legend: {{ position: 'bottom', labels: {{ boxWidth: 12, font: {{ size: 11 }} }} }},
+                legend: {{ display: false }},
                 tooltip: {{
                     callbacks: {{
-                        afterTitle: function(items) {{
-                            var i = items[0].dataIndex;
-                            return '角色数: ' + {json.dumps(char_counts)}[i];
+                        afterLabel: function(ctx) {{
+                            var i = ctx.dataIndex;
+                            return '角色数: ' + {json.dumps(char_counts)}[i] + ' | 最高分: ' + {json.dumps(top_scores)}[i] + ' | 平均: ' + {json.dumps(avgs)}[i];
                         }}
                     }}
                 }}
+            }},
+            scales: {{
+                x: {{ beginAtZero: true, title: {{ display: true, text: '总分' }} }},
+                y: {{ title: {{ display: false, text: '' }} }}
             }}
         }}
     }});
 }})();
-</script>"""
+</script>
+<div style="padding: 8px 16px; font-size: 0.85em; color: #888; display: flex; gap: 20px; flex-wrap: wrap;">
+    <span><span style="display:inline-block;width:14px;height:14px;background:#C41F3B;border:1px solid #000;vertical-align:middle;margin-right:4px;"></span> 3+角色</span>
+    <span><span style="display:inline-block;width:14px;height:14px;background:#F58CBA;border:1px solid #000;vertical-align:middle;margin-right:4px;"></span> 2角色</span>
+    <span><span style="display:inline-block;width:14px;height:14px;background:#69CCF0;border:1px solid #000;vertical-align:middle;margin-right:4px;"></span> 1角色</span>
+</div>"""
 
     def _generate_player_donut_charts(self, char_df, result_df):
         from config.settings import CLASS_COLOR_MAP, DUNGEON_TIME_LIMIT
