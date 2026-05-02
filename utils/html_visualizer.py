@@ -720,7 +720,6 @@ class HTMLVisualizer:
         return char_dungeon_details
 
     def _generate_player_ranking(self, char_df, result_df):
-        from collections import OrderedDict
         from config.settings import DUNGEON_TIME_LIMIT
 
         all_dungeons = list(DUNGEON_TIME_LIMIT.keys())
@@ -731,7 +730,7 @@ class HTMLVisualizer:
                 player_chars[p] = []
             player_chars[p].append(row["角色名"])
 
-        rows = []
+        labels, data, char_counts, top_scores = [], [], [], []
         for player, chars in player_chars.items():
             total = 0
             char_scores = []
@@ -747,18 +746,53 @@ class HTMLVisualizer:
                 char_scores.append(score)
                 total += score
             top = max(char_scores) if char_scores else 0
-            avg = round(total / len(chars), 1) if chars else 0
-            rows.append((player, len(chars), total, top, avg, total))
+            labels.append(player)
+            data.append(total)
+            char_counts.append(len(chars))
+            top_scores.append(top)
 
-        rows.sort(key=lambda r: r[2], reverse=True)
-        rank = 1
-        html = '<div class="table-wrapper"><table class="summary-table"><thead><tr><th>#</th><th>玩家</th><th>角色数</th><th>总分</th><th>最高单角色</th><th>平均分</th></tr></thead><tbody>'
-        for player, nchars, total, top, avg, _ in rows:
-            color = "#C41F3B" if nchars > 1 else "#888"
-            html += f'<tr><td>{rank}</td><td style="font-weight:bold;color:{color}">{player}</td><td>{nchars}</td><td>{total}</td><td>{top}</td><td>{avg}</td></tr>'
-            rank += 1
-        html += "</tbody></table></div>"
-        return html
+        import json
+        return f"""
+<div class="chart-card">
+    <div class="chart-container">
+        <canvas id="playerRankingChart"></canvas>
+    </div>
+</div>
+<script>
+new Chart(document.getElementById('playerRankingChart'), {{
+    type: 'bar',
+    data: {{
+        labels: {json.dumps(labels)},
+        datasets: [{{
+            label: '总分',
+            data: {json.dumps(data)},
+            backgroundColor: {json.dumps(["#C41F3B" if c > 1 else "#69CCF0" for c in char_counts])},
+            borderColor: '#000000',
+            borderWidth: 1,
+        }}]
+    }},
+    options: {{
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {{
+            legend: {{ display: false }},
+            tooltip: {{
+                callbacks: {{
+                    afterLabel: function(ctx) {{
+                        var i = ctx.dataIndex;
+                        return '角色数: ' + {json.dumps(char_counts)}[i] + ' | 最高角色: ' + {json.dumps(top_scores)}[i] + '分';
+                    }}
+                }}
+            }}
+        }},
+        scales: {{
+            x: {{ beginAtZero: true, title: {{ display: true, text: '总分' }} }},
+            y: {{ title: {{ display: true, text: '' }} }}
+        }}
+    }}
+}});
+</script>"""
 
     def _generate_player_donut_charts(self, char_df, result_df):
         from config.settings import CLASS_COLOR_MAP, DUNGEON_TIME_LIMIT
