@@ -806,7 +806,7 @@ class HTMLVisualizer:
             }},
             scales: {{
                 x: {{ beginAtZero: true, title: {{ display: true, text: '总分' }} }},
-                y: {{ title: {{ display: false, text: '' }} }}, categoryPercentage: 0.7, barPercentage: 0.8 }}, categoryPercentage: 0.7, barPercentage: 0.8 }
+                y: {{ title: {{ display: false, text: '' }}, categoryPercentage: 0.7, barPercentage: 0.8 }}
             }}
         }}
             }}]
@@ -828,7 +828,7 @@ class HTMLVisualizer:
             }},
             scales: {{
                 x: {{ beginAtZero: true, title: {{ display: true, text: '总分' }} }},
-                y: {{ title: {{ display: false, text: '' }} }}, categoryPercentage: 0.7, barPercentage: 0.8 }
+                y: {{ title: {{ display: false, text: '' }}, categoryPercentage: 0.7, barPercentage: 0.8 }}
             }}
         }}
     }});
