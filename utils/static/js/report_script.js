@@ -296,6 +296,8 @@ new Chart(classCtx, {
             label: '平均层数',
             data: classLevels,
             backgroundColor: classColors,
+            borderColor: '#000000',
+            borderWidth: 1,
         }]
     },
     options: {
