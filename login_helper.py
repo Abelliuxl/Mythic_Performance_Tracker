@@ -1,19 +1,19 @@
 """
 首次登录引导脚本 - 跨平台（Windows/Linux/macOS）
 
-在有显示器的电脑上运行一次，手动登录战网获取 Cookie。
-之后 NAS 上的爬虫即可复用此 Cookie 登录态。
+在有显示器的电脑上运行一次，手动登录战网获取 Cookie（cookies.pkl）。
+之后 NAS 上的爬虫即可复用此 Cookie 登录态，无需转移整个 Chrome 配置目录。
 
 用法:
   python login_helper.py
 
 流程:
   1. 浏览器自动打开到战网登录页面
-  2. 你手动完成登录（输入账号密码/扫码）
+  2. 手动完成登录（输入账号密码/扫码）
   3. 登录成功后页面跳转到角色页面
   4. 回到终端，按 Enter 确认
   5. Cookie 自动提取保存到 chrome_profile/cookies.pkl
-  6. 把这个 cookies.pkl 传到 NAS 上即可
+  6. 把 cookie 文件传到 NAS 上即可
 """
 
 import sys
@@ -23,55 +23,7 @@ import pickle
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
-import shutil
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from utils.platform_utils import platform_utils
-
-
-def get_chromedriver():
-    path = platform_utils.get_chromedriver_path()
-    if path and os.path.exists(path):
-        return path
-
-    in_path = shutil.which("chromedriver") or shutil.which("chromedriver.exe")
-    if in_path:
-        print(f"  从系统 PATH 找到 chromedriver: {in_path}")
-        return in_path
-
-    print("=" * 60)
-    print("  找不到 ChromeDriver!")
-    print()
-    print("  请确保:")
-    if platform_utils.is_windows():
-        print("    - chromedriver-win64/chromedriver.exe 存在于项目目录")
-        print("    - 或 chromedriver.exe 已添加到系统 PATH")
-        print("    - 下载: https://googlechromelabs.github.io/chrome-for-testing/")
-    else:
-        print(f"    - chromedriver-linux64/chromedriver 存在于项目目录")
-        print("    - 或 chromedriver 已添加到系统 PATH")
-    print("=" * 60)
-    return None
-
-
-def build_options():
-    options = Options()
-    options.add_argument("--window-size=1280,800")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    options.add_experimental_option("useAutomationExtension", False)
-
-    browser_opts = platform_utils.get_platform_config().get("browser_options", {})
-    for arg_name in ("headless_arg", "gpu_arg", "sandbox_arg", "xvfb_arg"):
-        val = browser_opts.get(arg_name)
-        if val:
-            options.add_argument(val)
-
-    return options
+from utils.browser_manager import BrowserManager
 
 
 def main():
@@ -79,19 +31,16 @@ def main():
     print("    战网登录引导 - Mythic Performance Tracker")
     print("=" * 60)
     print()
+    print("本脚本将打开浏览器。请完成战网登录后回到终端确认。")
+    print()
 
-    chromedriver_path = get_chromedriver()
-    if not chromedriver_path:
-        input("\n按 Enter 退出...")
-        return
-
-    options = build_options()
-    service = Service(executable_path=chromedriver_path)
-
+    browser_manager = BrowserManager()
     driver = None
     try:
         print("正在启动浏览器...")
-        driver = webdriver.Chrome(service=service, options=options)
+        driver = browser_manager.create_driver(
+            use_persistent_session=False, headless=False
+        )
 
         print("正在打开战网登录页面...")
         driver.get("https://wow.blizzard.cn/character/")
@@ -118,19 +67,30 @@ def main():
             time.sleep(2)
 
         all_cookies = driver.get_cookies()
-        blz_cookies = [c for c in all_cookies if any(
-            d in (c.get("domain", "") or "").lower()
-            for d in ["blizzard.cn", "battlenet.com.cn", "battlenet.cn",
-                      "webapi.blizzard.cn", "wow.blizzard.cn"]
-        )]
+        blz_cookies = [
+            c
+            for c in all_cookies
+            if any(
+                d in (c.get("domain", "") or "").lower()
+                for d in [
+                    "blizzard.cn",
+                    "battlenet.com.cn",
+                    "battlenet.cn",
+                    "webapi.blizzard.cn",
+                    "wow.blizzard.cn",
+                ]
+            )
+        ]
 
         print()
         print(f"  共获取 {len(all_cookies)} 个 Cookie")
         print(f"  其中 Blizzard 相关 {len(blz_cookies)} 个")
         for c in blz_cookies[:10]:
-            print(f"    {c.get('domain',''):40s} {c.get('name',''):30s}")
+            print(f"    {c.get('domain', ''):40s} {c.get('name', ''):30s}")
 
-        save_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "chrome_profile")
+        save_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "chrome_profile"
+        )
         os.makedirs(save_dir, exist_ok=True)
         cookie_file = os.path.join(save_dir, "cookies.pkl")
         with open(cookie_file, "wb") as f:
@@ -148,6 +108,7 @@ def main():
     except Exception as e:
         print(f"\n  ❌ 出错: {e}")
         import traceback
+
         traceback.print_exc()
     finally:
         if driver:

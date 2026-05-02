@@ -56,6 +56,7 @@ chromedriver-win64/chromedriver.exe
 chromedriver-win64/LICENSE.chromedriver
 chromedriver-win64/THIRD_PARTY_NOTICES.chromedriver
 chromedriver-linux64/
+chromedriver.exe
 
 # Chrome profile (user session data)
 chrome_profile/

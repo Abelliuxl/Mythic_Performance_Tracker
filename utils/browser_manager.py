@@ -29,15 +29,19 @@ class BrowserManager:
         os.makedirs(data_dir, exist_ok=True)
         return data_dir
 
-    def create_driver(self, use_persistent_session=True):
+    def create_driver(self, use_persistent_session=True, headless=None):
         try:
             chromedriver_path = self._get_chromedriver_path()
+
+            os.environ.setdefault("no_proxy", "localhost,127.0.0.1,::1")
+            os.environ.setdefault("NO_PROXY", "localhost,127.0.0.1,::1")
             if not chromedriver_path:
                 raise FileNotFoundError("无法找到chromedriver文件")
 
             options = Options()
 
-            if self.config.get("headless"):
+            is_headless = self.config.get("headless") if headless is None else headless
+            if is_headless:
                 options.add_argument("--headless=new")
             if self.config.get("disable_gpu"):
                 options.add_argument("--disable-gpu")
@@ -59,6 +63,7 @@ class BrowserManager:
                 options.add_argument(f"user-agent={self.config['user_agent']}")
 
             options.add_argument("--remote-debugging-port=9222")
+            options.add_argument("--no-proxy-server")
             options.add_argument("--disable-blink-features=AutomationControlled")
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option("useAutomationExtension", False)
@@ -66,7 +71,7 @@ class BrowserManager:
             platform_config = platform_utils.get_platform_config()
             browser_options = platform_config.get("browser_options", {})
 
-            if browser_options.get("headless_arg"):
+            if is_headless and browser_options.get("headless_arg"):
                 options.add_argument(browser_options["headless_arg"])
             if browser_options.get("gpu_arg"):
                 options.add_argument(browser_options["gpu_arg"])
@@ -83,13 +88,16 @@ class BrowserManager:
 
             driver = webdriver.Chrome(service=service, options=options)
 
-            driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-                "source": """
+            driver.execute_cdp_cmd(
+                "Page.addScriptToEvaluateOnNewDocument",
+                {
+                    "source": """
                 Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
                 Object.defineProperty(navigator, 'plugins', { get: () => [1,2,3,4,5] });
                 Object.defineProperty(navigator, 'languages', { get: () => ['zh-CN', 'zh', 'en'] });
                 """
-            })
+                },
+            )
 
             logger.success("浏览器驱动创建成功")
             return driver
@@ -120,7 +128,10 @@ class BrowserManager:
                         c["secure"] = True
                     if cookie.get("httpOnly"):
                         c["httpOnly"] = True
-                    if "sameSite" in cookie and cookie["sameSite"] not in ("unspecified", None):
+                    if "sameSite" in cookie and cookie["sameSite"] not in (
+                        "unspecified",
+                        None,
+                    ):
                         c["sameSite"] = cookie["sameSite"]
                     driver.add_cookie(c)
                 except Exception:
@@ -171,6 +182,17 @@ class BrowserManager:
         if platform_path:
             return platform_path
 
+        try:
+            from webdriver_manager.chrome import ChromeDriverManager
+
+            chromedriver_path = ChromeDriverManager().install()
+            logger.info(
+                f"使用 webdriver-manager 自动下载的 ChromeDriver: {chromedriver_path}"
+            )
+            return chromedriver_path
+        except Exception as e:
+            logger.warning(f"webdriver-manager 自动获取 ChromeDriver 失败: {e}")
+
         configured_path = self.config.get("chromedriver_path")
         if configured_path and os.path.exists(configured_path):
             return configured_path
@@ -204,10 +226,12 @@ class BrowserManager:
                 "drivers/chromedriver",
                 os.path.join(os.getcwd(), "chromedriver"),
                 os.path.join(os.getcwd(), "chromedriver-mac-x64", "chromedriver"),
-            ]
+            ],
         }
 
-        paths = platform_specific_paths.get(platform_name, platform_specific_paths["linux"])
+        paths = platform_specific_paths.get(
+            platform_name, platform_specific_paths["linux"]
+        )
         for path in paths:
             if os.path.exists(path):
                 logger.info(f"找到chromedriver: {path}")
