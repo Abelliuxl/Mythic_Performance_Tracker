@@ -105,11 +105,11 @@ BLIZZARD_API_BASE = "https://webapi.blizzard.cn/wow-armory-server/api"
 
 # 服务器中文名 → 英文 slug 映射
 SERVER_SLUG_MAP = {
-    "回音山": "echo", "霜之哀伤": "frostmourne", "死亡之翼": "deathwing",
+    "回音山": "echo-ridge", "霜之哀伤": "frostmourne", "死亡之翼": "deathwing",
     "通灵学院": "scholomance", "斯坦索姆": "stratholme", "影之哀伤": "shadowmourne",
-    "米奈希尔": "menethil", "伊森利恩": "isalien", "图拉扬": "turalyon",
-    "诺兹多姆": "nozdormu", "神圣之歌": "hymns",
-    "丽丽（四川）": "lili", "阿古斯": "argus", "阿卡玛": "akama",
+    "米奈希尔": "menethil",     "伊森利恩": "isillien", "图拉扬": "turalyon",
+    "诺兹多姆": "nozdormu", "神圣之歌": "holy-chanter",
+    "丽丽（四川）": "li-li", "阿古斯": "argus", "阿卡玛": "akama",
     "阿拉索": "arathor", "阿曼尼": "amani", "阿纳克洛斯": "anachronos",
     "阿努巴拉克": "anubarak", "埃德萨拉": "azshara", "埃加洛尔": "aggramar",
     "埃雷达尔": "eredar", "埃苏雷格": "azuregos", "艾露恩": "elune",
