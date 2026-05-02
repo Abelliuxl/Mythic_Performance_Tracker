@@ -84,25 +84,33 @@ class MythicPlusCrawler:
 
                 all_records = []
 
-                records = self.data_processor.extract_mplus_from_page_text(driver)
+                records = self.data_processor.extract_mplus_from_dom(driver)
                 if records:
-                    logger.info(f"从页面文本提取到 {len(records)} 条大秘境记录")
                     all_records.extend(records)
 
-                vue_records = self.data_processor.extract_window_data_vue(driver)
-                if vue_records:
-                    logger.info(f"从 Vue data 提取到 {len(vue_records)} 条记录")
-                    all_records.extend(vue_records)
+                if not all_records:
+                    records = self.data_processor.extract_mplus_from_page_text(driver)
+                    if records:
+                        logger.info(f"从页面文本提取到 {len(records)} 条大秘境记录")
+                        all_records.extend(records)
 
-                attr_records = self.data_processor.extract_json_from_attrs(driver)
-                if attr_records:
-                    logger.info(f"从 DOM 属性提取到 {len(attr_records)} 条记录")
-                    all_records.extend(attr_records)
+                if not all_records:
+                    vue_records = self.data_processor.extract_window_data_vue(driver)
+                    if vue_records:
+                        logger.info(f"从 Vue data 提取到 {len(vue_records)} 条记录")
+                        all_records.extend(vue_records)
 
-                vuex_records = self.data_processor.extract_vuex_data(driver)
-                if vuex_records:
-                    logger.info(f"从 Vuex store 提取到 {len(vuex_records)} 条记录")
-                    all_records.extend(vuex_records)
+                if not all_records:
+                    attr_records = self.data_processor.extract_json_from_attrs(driver)
+                    if attr_records:
+                        logger.info(f"从 DOM 属性提取到 {len(attr_records)} 条记录")
+                        all_records.extend(attr_records)
+
+                if not all_records:
+                    vuex_records = self.data_processor.extract_vuex_data(driver)
+                    if vuex_records:
+                        logger.info(f"从 Vuex store 提取到 {len(vuex_records)} 条记录")
+                        all_records.extend(vuex_records)
 
                 if all_records:
                     self._save_cookies(driver)

@@ -242,6 +242,66 @@ class DataProcessor:
             return None
 
     @staticmethod
+    def extract_mplus_from_dom(driver):
+        records = []
+        js_code = """
+        var results = [];
+        var slides = document.querySelectorAll('.stone-slide');
+        slides.forEach(function(slide) {
+            var text = slide.innerText || '';
+            var lines = text.split('\\n').filter(function(l) { return l.trim(); });
+            if (lines.length >= 3) {
+                results.push({
+                    level: lines[0].trim(),
+                    dungeon: lines[1].trim(),
+                    time: lines[2].trim(),
+                });
+            }
+        });
+        return results;
+        """
+        try:
+            raw_data = driver.execute_script(js_code)
+            seen = set()
+            for item in raw_data:
+                key = (item["dungeon"], item["level"])
+                if key in seen:
+                    continue
+                seen.add(key)
+
+                dungeon = item["dungeon"]
+                time_str = item["time"]
+                level_str = item["level"]
+
+                if not re.match(r"\d{1,2}:\d{2}", time_str):
+                    continue
+
+                try:
+                    level_int = int(level_str)
+                except (ValueError, TypeError):
+                    continue
+
+                t_split = time_str.split(":")
+                run_seconds = int(t_split[0]) * 60 + int(t_split[1])
+                limit = DUNGEON_TIME_LIMIT.get(dungeon)
+                on_time = limit is not None and run_seconds <= limit
+                result = "是" if on_time else "否"
+
+                records.append({
+                    "副本": dungeon,
+                    "限时层数": level_int,
+                    "通关时间": time_str,
+                    "是否限时": result,
+                })
+
+            if records:
+                logger.info(f"从 DOM 结构提取到 {len(records)} 条大秘境记录")
+            return records
+        except Exception as e:
+            logger.debug(f"DOM 提取失败: {e}")
+            return records
+
+    @staticmethod
     def extract_mplus_from_page_text(driver):
         records = []
         js_code = """
