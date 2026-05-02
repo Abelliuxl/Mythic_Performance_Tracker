@@ -35,26 +35,25 @@ class MythicPlusCrawler:
             time.sleep(5)
             current = driver.current_url.lower()
             if "login" in current:
-                logger.warning("未检测到登录状态")
-                try:
-                    loaded = self._load_cookies(driver)
-                    if loaded:
-                        driver.get("https://wow.blizzard.cn/character/")
-                        time.sleep(5)
-                        if "login" not in driver.current_url.lower():
-                            logger.success("Cookie 导入成功，已恢复登录态")
-                            return True
-                except Exception as e:
-                    logger.debug(f"Cookie 恢复失败: {e}")
+                logger.info("尝试注入 Cookie 恢复登录态...")
+                injected = self.browser_manager.inject_cookies(driver)
+                if injected:
+                    driver.get("https://wow.blizzard.cn/character/")
+                    time.sleep(5)
+                    if "login" not in driver.current_url.lower():
+                        self._save_cookies(driver)
+                        logger.success("Cookie 注入成功，已恢复登录态")
+                        return True
 
-                logger.error(
+                logger.warning(
                     "需要登录战网才能爬取。\n"
-                    f"  请先在 {'有显示器的电脑' if sys.platform != 'win32' else '此处'} 运行:\n"
-                    f"    python login_helper.py\n"
-                    f"  登录后关闭浏览器，再重新运行爬虫。"
+                    "请在有显示器的电脑上运行:\n"
+                    "  python login_helper.py\n"
+                    "登录完成后，把生成的 chrome_profile/cookies.pkl 拷贝到本机同目录。"
                 )
                 return False
             logger.success("已检测到登录态")
+            self._save_cookies(driver)
             return True
         except Exception as e:
             logger.error(f"检查登录态失败: {e}")
@@ -69,28 +68,6 @@ class MythicPlusCrawler:
             logger.info(f"已保存 {len(cookies)} 个 Cookie 到 {self.cookie_file}")
         except Exception as e:
             logger.debug(f"保存 Cookie 失败: {e}")
-
-    def _load_cookies(self, driver):
-        if not os.path.exists(self.cookie_file):
-            logger.info("未找到 Cookie 文件")
-            return False
-        try:
-            with open(self.cookie_file, "rb") as f:
-                cookies = pickle.load(f)
-            driver.get("https://wow.blizzard.cn/")
-            time.sleep(2)
-            for cookie in cookies:
-                try:
-                    if cookie.get("sameSite") == "unspecified":
-                        cookie["sameSite"] = "Lax"
-                    driver.add_cookie(cookie)
-                except Exception:
-                    continue
-            logger.info(f"已导入 {len(cookies)} 个 Cookie")
-            return True
-        except Exception as e:
-            logger.debug(f"加载 Cookie 失败: {e}")
-            return False
 
     def scrape_character(self, driver, server_name, character_name):
         url = self.data_processor.build_character_url(server_name, character_name)
@@ -160,7 +137,7 @@ class MythicPlusCrawler:
         driver = None
 
         try:
-            driver = self.browser_manager.create_driver(use_persistent_session=True)
+            driver = self.browser_manager.create_driver(use_persistent_session=False)
 
             if not self._ensure_login(driver):
                 return False

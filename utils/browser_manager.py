@@ -18,7 +18,11 @@ class BrowserManager:
         self.config = BROWSER_CONFIG
         self.session_config = SESSION_CONFIG
 
-    def _get_user_data_dir(self):
+    def get_cookie_file(self):
+        data_dir = self._get_session_dir()
+        return os.path.join(data_dir, "cookies.pkl")
+
+    def _get_session_dir(self):
         project_root = os.getcwd()
         data_dir_name = self.session_config.get("user_data_dir", "chrome_profile")
         data_dir = os.path.join(project_root, data_dir_name)
@@ -59,11 +63,6 @@ class BrowserManager:
             options.add_experimental_option("excludeSwitches", ["enable-automation"])
             options.add_experimental_option("useAutomationExtension", False)
 
-            if use_persistent_session:
-                user_data_dir = self._get_user_data_dir()
-                options.add_argument(f"--user-data-dir={user_data_dir}")
-                logger.info(f"使用持久化用户数据目录: {user_data_dir}")
-
             platform_config = platform_utils.get_platform_config()
             browser_options = platform_config.get("browser_options", {})
 
@@ -98,6 +97,39 @@ class BrowserManager:
         except Exception as e:
             logger.error(f"创建浏览器驱动失败: {e}")
             raise
+
+    def inject_cookies(self, driver):
+        cookie_file = self.get_cookie_file()
+        if not os.path.exists(cookie_file):
+            logger.info(f"Cookie 文件不存在: {cookie_file}")
+            return False
+        try:
+            with open(cookie_file, "rb") as f:
+                cookies = pickle.load(f)
+            driver.get("https://wow.blizzard.cn/")
+            time.sleep(2)
+            for cookie in cookies:
+                try:
+                    c = {
+                        "name": cookie.get("name"),
+                        "value": cookie.get("value"),
+                        "domain": cookie.get("domain"),
+                        "path": cookie.get("path", "/"),
+                    }
+                    if cookie.get("secure"):
+                        c["secure"] = True
+                    if cookie.get("httpOnly"):
+                        c["httpOnly"] = True
+                    if "sameSite" in cookie and cookie["sameSite"] not in ("unspecified", None):
+                        c["sameSite"] = cookie["sameSite"]
+                    driver.add_cookie(c)
+                except Exception:
+                    continue
+            logger.info(f"已注入 {len(cookies)} 个 Cookie")
+            return True
+        except Exception as e:
+            logger.warning(f"注入 Cookie 失败: {e}")
+            return False
 
     def safe_quit(self, driver):
         try:
