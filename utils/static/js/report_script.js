@@ -108,7 +108,7 @@ new Chart(levelCtx, {
             label: '数量',
             data: levelData,
             backgroundColor: levelBackgroundColors,
-            borderColor: levelBorderColors,
+            borderColor: '#000000',
             borderWidth: 1
         }]
     },
@@ -170,7 +170,7 @@ new Chart(dungeonCtx, {
             label: '平均等级',
             data: dungeonAvgLevels,
             backgroundColor: dungeonBackgroundColors,
-            borderColor: dungeonBorderColors,
+            borderColor: '#000000',
             borderWidth: 1,
             yAxisID: 'y-avg-level'
         }, {
@@ -551,7 +551,7 @@ function showCharacterDetailModal(characterKey) {
                 label: '平均层数',
                 data: avgLevels,
                 backgroundColor: backgroundColors,
-                borderColor: borderColors,
+                borderColor: '#000000',
                 borderWidth: 1
             }]
         },
@@ -735,7 +735,7 @@ function showCharacterDetailModal(characterKey) {
             label: '总平均等级',
             data: combinedData,
             backgroundColor: 'rgba(100, 149, 237, 0.6)', // 低饱和度且半透明的蓝色
-            borderColor: 'rgba(100, 149, 237, 0.8)',
+            borderColor: '#000000',
             borderWidth: 1,
             barPercentage: 0.6, // 调整柱状条宽度占比，避免太粗
             categoryPercentage: 0.8 // 调整类别间距占比
@@ -847,7 +847,7 @@ function showPlayerDetailModal(playerName) {
                 label: '平均层数',
                 data: avgLevels,
                 backgroundColor: backgroundColors,
-                borderColor: borderColors,
+                borderColor: '#000000',
                 borderWidth: 1
             }]
         },
@@ -1417,7 +1417,7 @@ function showPlayerDetailModal(playerName) {
                 label: '总层数',
                 data: combinedData,
                 backgroundColor: backgroundColors,
-                borderColor: backgroundColors,
+                borderColor: '#000000',
                 borderWidth: 1,
             }];
 
