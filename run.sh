@@ -8,7 +8,7 @@ exec >>"$LOG" 2>&1
 
 echo "=== $(date '+%F %T') start ==="
 
-/home/liuxl/miniconda3/bin/python mplus_batch_crawler.py
+.venv/bin/python mplus_batch_crawler.py
 
 bash /home/liuxl/bin/push_page.sh
 
