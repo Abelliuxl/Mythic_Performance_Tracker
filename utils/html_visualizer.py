@@ -714,6 +714,7 @@ class HTMLVisualizer:
             background-color: #{color} !important;
             color: #1f2937;
             font-weight: bold;
+            border: 1px solid #000000;
         }}
         """ for level, color in LAYER_COLOR_MAP.items()])
             css_content = css_content + layer_color_styles
@@ -875,7 +876,7 @@ class HTMLVisualizer:
             html += f"""
                         <tr>
                             <td class="sticky-col sticky-col-1">{player_data["player"]}</td>
-                            <td class="sticky-col sticky-col-2" style="background-color: {rgba_color};">{player_data["character"]}</td>
+                            <td class="sticky-col sticky-col-2" style="background-color: {rgba_color}; border: 1px solid #000000;">{player_data["character"]}</td>
             """
             for dungeon_full_name in dungeons:
                 level = player_data["dungeons"].get(dungeon_full_name, "-")
@@ -1037,6 +1038,7 @@ class HTMLVisualizer:
             background-color: #{color} !important;
             color: #1f2937;
             font-weight: bold;
+            border: 1px solid #000000;
         }}
         """ for level, color in LAYER_COLOR_MAP.items()])
             css_content = css_content + layer_color_styles
