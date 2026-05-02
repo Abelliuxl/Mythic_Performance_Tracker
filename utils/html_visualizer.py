@@ -806,7 +806,29 @@ class HTMLVisualizer:
             }},
             scales: {{
                 x: {{ beginAtZero: true, title: {{ display: true, text: '总分' }} }},
-                y: {{ title: {{ display: false, text: '' }} }}
+                y: {{ title: {{ display: false, text: '' }} }}, categoryPercentage: 0.7, barPercentage: 0.8 }}, categoryPercentage: 0.7, barPercentage: 0.8 }
+            }}
+        }}
+            }}]
+        }},
+        options: {{
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {{
+                legend: {{ display: false }},
+                tooltip: {{
+                    callbacks: {{
+                        afterLabel: function(ctx) {{
+                            var i = ctx.dataIndex;
+                            return '角色数: ' + {json.dumps(char_counts)}[i] + ' | 最高分: ' + {json.dumps(top_scores)}[i] + ' | 平均: ' + {json.dumps(avgs)}[i];
+                        }}
+                    }}
+                }}
+            }},
+            scales: {{
+                x: {{ beginAtZero: true, title: {{ display: true, text: '总分' }} }},
+                y: {{ title: {{ display: false, text: '' }} }}, categoryPercentage: 0.7, barPercentage: 0.8 }
             }}
         }}
     }});
