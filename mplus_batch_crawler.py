@@ -116,6 +116,11 @@ class MythicPlusCrawler:
                     self._save_cookies(driver)
                     return all_records
 
+                title = driver.title
+                if " - 角色" in title:
+                    logger.info(f"角色页面存在但无大秘境记录 (0层)，跳过重试")
+                    return []
+
                 if attempt == 1:
                     page_source = driver.page_source[:3000]
                     logger.info(f"页面源码片段: {page_source}")
